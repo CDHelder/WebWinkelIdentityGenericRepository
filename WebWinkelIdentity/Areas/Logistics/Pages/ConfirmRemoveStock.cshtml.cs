@@ -52,8 +52,8 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         {
             foreach (var storeProduct in StoreProducts)
             {
-                var addQuantity = AllTextDataList.Where(x => x == storeProduct.ProductId).Count();
-                storeProduct.Quantity -= addQuantity;
+                var removeQuantity = AllTextDataList.Where(x => x == storeProduct.ProductId).Count();
+                storeProduct.Quantity -= removeQuantity;
 
                 unitOfWork.StoreProductRepository.Update(storeProduct);
                 if (unitOfWork.SaveChanges() == false)
@@ -62,16 +62,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
                     return Page();
                 }
 
-                ProductStockChange PSC = new ProductStockChange
-                {
-                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
-                    DateChanged = DateTime.Now,
-                    StoreProductId = storeProduct.Id,
-                    StockChange = -addQuantity
-                };
-
-                unitOfWork.ProductStockChangeRepository.Create(PSC);
-                if (unitOfWork.SaveChanges() == false)
+                if(CreateAndSaveProductStockChanges(storeProduct, removeQuantity) == false)
                 {
                     FormResult = $"Error: Couldnt log the stock changes made to product with id:{storeProduct.ProductId}";
                     return Page();
@@ -81,6 +72,25 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllTextData = string.Join("\n", AllTextDataList);
             SuccesStoreId = PostStoreId;
             return RedirectToPage("/SuccesfullyRemovedStock");
+        }
+
+        private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int removeQuantity)
+        {
+            ProductStockChange PSC = new ProductStockChange
+            {
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
+                DateChanged = DateTime.Now,
+                StoreProductId = storeProduct.Id,
+                StockChange = -removeQuantity
+            };
+
+            unitOfWork.ProductStockChangeRepository.Create(PSC);
+            if (unitOfWork.SaveChanges() == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

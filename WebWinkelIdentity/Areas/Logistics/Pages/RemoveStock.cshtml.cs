@@ -32,7 +32,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         [TempData]
         public string AllTextData { get; set; }
 
-        //TODO: Check if new Repository works correctly
         public IActionResult OnGet()
         {
             AllText = null;
@@ -62,22 +61,27 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             }
 
             AllText = AllText.Replace("\r", "");
-            var list = AllText.Split("\n");
+            var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
-            if (store == null)
+            if (DoesStoreExcist() == false)
             {
                 FormResult = $"Error: Couldn't find store with id: {SelectedStoreId}";
+                return Page();
             }
 
-            foreach (var productId in list)
+            foreach (var productId in list.Distinct())
             {
-                var product = unitOfWork.ProductRepository.GetById(int.Parse(productId));
-                if (product == null)
+                if (DoesProductExcist(productId) == false)
                 {
                     FormResult = $"Error: Couldnt find product with id:{productId} in the database";
                     return Page();
                 }
+            }
+
+            //TODO: Check if DoesEnteredStockChangeExcist function works correctly
+            if (DoesEnteredStockChangeExcist(list) == false)
+            {
+                return Page();
             }
 
             AllTextData = AllText;
@@ -85,6 +89,43 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
             return RedirectToPage("/ConfirmRemoveStock");
 
+        }
+
+        private bool DoesEnteredStockChangeExcist(string[] list)
+        {
+            var intList = list.Select(x => int.Parse(x)).ToList();
+            foreach (var id in unitOfWork.StoreProductRepository.GetAllStoreProducts(intList, int.Parse(SelectedStoreId)))
+            {
+                var enteredStockChange = intList.Where(adat => adat == id.ProductId).Count();
+                var currentStock = id.Quantity;
+                if (currentStock < enteredStockChange)
+                {
+                    FormResult = $"Error: Cant delete {enteredStockChange} products with id:{id.ProductId} " +
+                        $"because current stock is {currentStock}";
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool DoesProductExcist(string productId)
+        {
+            var product = unitOfWork.ProductRepository.GetById(int.Parse(productId));
+            if (product == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool DoesStoreExcist()
+        {
+            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
+            if (store == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
