@@ -35,7 +35,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         [TempData]
         public string AllTextData { get; set; }
 
-        //TODO: Check if new Repository works correctly
         public IActionResult OnGet()
         {
             var AllTextDataArray = AllTextData.Split("\n");
@@ -52,28 +51,19 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         {
             foreach (var storeProduct in StoreProducts)
             {
-                var addQuantity = AllTextDataList.Where(x=>x==storeProduct.ProductId).Count();
+                var addQuantity = AllTextDataList.Where(x => x == storeProduct.ProductId).Count();
                 storeProduct.Quantity += addQuantity;
 
                 unitOfWork.StoreProductRepository.Update(storeProduct);
                 if (unitOfWork.SaveChanges() == false)
                 {
-                    FormResult = $"Error: Couldnt save product with id:{storeProduct.ProductId} in the database";
+                    FormResult = $"Error: Couldnt save changes to product with id:{storeProduct.ProductId}";
                     return Page();
                 }
 
-                ProductStockChange PSC = new ProductStockChange
+                if(CreateAndSaveProductStockChanges(storeProduct, addQuantity) == false)
                 {
-                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
-                    DateChanged = DateTime.Now,
-                    StoreProductId = storeProduct.Id,
-                    StockChange = addQuantity
-                };
-
-                unitOfWork.ProductStockChangeRepository.Create(PSC);
-                if (unitOfWork.SaveChanges() == false)
-                {
-                    FormResult = $"Error: Couldnt log the stock changes made to product with id:{storeProduct.ProductId}";
+                    FormResult = $"Error: Couldnt log the changes made to product with id:{storeProduct.ProductId}";
                     return Page();
                 }
             }
@@ -81,6 +71,25 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllTextData = string.Join("\n", AllTextDataList);
             SuccesStoreId = PostStoreId;
             return RedirectToPage("/SuccesfullyAddedStock");
+        }
+
+        private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int addQuantity)
+        {
+            ProductStockChange PSC = new ProductStockChange
+            {
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
+                DateChanged = DateTime.Now,
+                StoreProductId = storeProduct.Id,
+                StockChange = addQuantity
+            };
+
+            unitOfWork.ProductStockChangeRepository.Create(PSC);
+            if (unitOfWork.SaveChanges() == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

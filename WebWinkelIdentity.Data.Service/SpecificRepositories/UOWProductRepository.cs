@@ -47,5 +47,16 @@ namespace WebWinkelIdentity.Data.Service.SpecificRepositories
 
             Update(products);
         }
+
+        public List<Product> GetUniqueListProducts()
+        {
+            return _dbContext.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .ToList()
+                .GroupBy(p => new { p.Name, p.Price, p.Color, p.Fabric, p.BrandId, p.CategoryId })
+                .Select(p => p.First())
+                .ToList();
+        }
     }
 }

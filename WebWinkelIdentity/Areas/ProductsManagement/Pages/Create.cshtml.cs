@@ -38,7 +38,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
             if (unitOfWork.SaveChanges() == true)
             {
-                return RedirectToPage($"./Details/{Product.Id}");
+                return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }
 
             return Page();

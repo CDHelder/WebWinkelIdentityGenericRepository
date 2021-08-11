@@ -33,7 +33,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         [TempData]
         public string AllTextData { get; set; }
 
-        //TODO: Check if new Repository works correctly
         public IActionResult OnGet()
         {
             AllText = null;
@@ -64,35 +63,53 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             }
 
             AllText = AllText.Replace("\r", "");
-            //TODO: check if list comes back correctly
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
-
-            if (store == null)
+            if (DoesStoreExcist() == false)
             {
                 FormResult = $"Error: Couldn't find store with id: {SelectedStoreId}";
+                return Page();
             }
 
-            foreach (var productId in list)
+            var distinctList = list.Distinct();
+            foreach (var productId in distinctList)
             {
-                if (productId != "")
+                if(DoesProductExcist(productId) == false)
                 {
-                    var intId = int.Parse(productId);
-                    var product = unitOfWork.ProductRepository.GetById(intId);
-                    if (product == null)
-                    {
-                        FormResult = $"Error: Couldnt find product with id:{productId} in the database";
-                        return Page();
-                    }
+                    FormResult = $"Error: Couldnt find product with id:{productId} in the database";
+                    return Page();
                 }
             }
 
-            AllTextData = string.Join("\n",list);
+            AllTextData = string.Join("\n", list);
             StoreId = int.Parse(SelectedStoreId);
 
             return RedirectToPage("/ConfirmAddStock");
 
+        }
+
+        private bool DoesProductExcist(string productId)
+        {
+            if (productId == "")
+                return false;
+
+            var product = unitOfWork.ProductRepository.GetById(int.Parse(productId));
+            if (product == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool DoesStoreExcist()
+        {
+            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
+            if (store == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

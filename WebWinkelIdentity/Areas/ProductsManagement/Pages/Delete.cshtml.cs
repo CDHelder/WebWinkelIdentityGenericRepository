@@ -27,7 +27,6 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         public List<Store> Stores { get; set; }
         public bool CurrentStock { get; set; }
 
-        //TODO: Check if new Repository works correctly
         public IActionResult OnGetAsync(int id)
         {
             Product = unitOfWork.ProductRepository.GetById(id);

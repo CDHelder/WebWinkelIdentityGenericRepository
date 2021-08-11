@@ -20,12 +20,9 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
         public List<Product> Product { get;set; }
 
-        //TODO: Check if new Repository works correctly
         public void OnGetAsync()
         {
-            Product = unitOfWork.ProductRepository.GetList(include: store => store
-                .Include(s => s.Brand)
-                .Include(s => s.Category));
+            Product = unitOfWork.ProductRepository.GetUniqueListProducts();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace WebWinkelIdentity.Data.Service.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        //IGenericRepository<T> Repository { get; }
         public UOWProductRepository ProductRepository { get; }
         public UOWProductStockChangeRepository ProductStockChangeRepository { get; }
         public UOWBrandRepository BrandRepository { get; }

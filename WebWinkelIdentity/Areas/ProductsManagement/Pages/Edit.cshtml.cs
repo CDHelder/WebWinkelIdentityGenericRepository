@@ -24,7 +24,6 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         [BindProperty]
         public List<Product> ProductVariations { get; set; }
 
-        //TODO: Check if new Repository works correctly
         //TODO: Fix decimal input mag ook decimale waardes geven en niet alleen hele
         //VB = Input: 15,95 Veranderd naar: 1595
         public IActionResult OnGetAsync(int id)

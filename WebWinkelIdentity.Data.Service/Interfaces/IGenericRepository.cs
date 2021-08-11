@@ -25,6 +25,5 @@ namespace WebWinkelIdentity.Data.Service.Interfaces
         void Update(List<TEntity> objs);
         void Delete(int id);
         void Delete(TEntity entity);
-        //bool SaveChanges();
     }
 }
