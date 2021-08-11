@@ -1,0 +1,257 @@
+﻿@page
+@model EditStocksModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Edit Stock</h3>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Price)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Color)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Color)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Fabric)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Fabric)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Brand)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Brand.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Product.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Product.Category.Name)
+        </dd>
+    </dl>
+</div>
+<hr />
+
+
+<h3>Stock </h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+
+            </th>
+            @foreach (var product in Model.ProductVariations)
+            {
+                <th>
+                    @(product.Size.ToString())
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Stores.Count(); i++)
+        {
+            <tr>
+                <td>
+                    <b>@Model.Stores[i].Address.City</b>
+                </td>
+                @for (int y = 0; y < Model.ProductStocks.Count(); y++)
+                {
+                    if (Model.Stores[i].Id == Model.ProductStocks[y].StoreId)
+                    {
+
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Id)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].BrandId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].CategoryId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Color)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Description)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Fabric)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Name)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Price)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Size)
+                        <td class="form-group">
+                            <input asp-for="@Model.ProductStocks[y].Quantity" class="form-control" />
+                            <span asp-validation-for="@Model.ProductStocks[y].Quantity" class="text-danger"></span>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*<h3>Stock </h3>
+    <form method="post">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+
+                    </th>
+                    @for (int i = 0; i < Model.ProductVariations.Count(); i++)
+                    {
+                        <th>
+                            @(Model.ProductVariations[i].Size.ToString())
+                        </th>
+                    }
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <b>Rotterdam</b>
+                    </td>
+                    @for (int i = 0; i < Model.ProductVariations.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Id)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].BrandId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].CategoryId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Color)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Description)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Fabric)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Name)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Price)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Size)
+                        <td class="form-group">
+                            <input asp-for="@Model.ProductVariations[i].RotterdamStock" class="form-control" />
+                            <span asp-validation-for="@Model.ProductVariations[i].RotterdamStock" class="text-danger"></span>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td>
+                        <b>Haarlem</b>
+                    </td>
+                    @for (int i = 0; i < Model.ProductVariations.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Id)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].BrandId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].CategoryId)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Color)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Description)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Fabric)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Name)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Price)
+                        @Html.HiddenFor(model => Model.ProductVariations[i].Size)
+                        <td class="form-group">
+                            <input asp-for="@Model.ProductVariations[i].HaarlemStock" class="form-control" />
+                            <span asp-validation-for="@Model.ProductVariations[i].HaarlemStock" class="text-danger"></span>
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </form>*@
+
+@*<h3>Stock </h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+
+                </th>
+               @foreach (var product in Model.ProductVariations)
+                {
+                <th>
+                    @(product.Size.ToString())
+                </th>
+                }
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <form method="post">
+           @foreach (var store in Model.StoresWithProduct)
+            {
+            <tr>
+                <td>
+                    <b>@(store.Address.City)</b>
+                </td>
+               @foreach (var product in store.Products)
+                {
+                <td>
+                    <div class="form-group">
+                        <input asp-for="@product.AmountInStock" class="form-control, col-6" width="50" />
+                        <span asp-validation-for="@product.AmountInStock" class="text-danger"></span>
+                    </div>
+                </td>
+                }
+            </tr>
+            }
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </tbody>
+    </table>*@
+
+
+@*@foreach (var store in Model.StoresWithProduct)
+    {
+        <a>@store.Address.City</a>
+
+        @foreach (var product in store.Products)
+        {
+            <a>@product.AmountInStock.ToString()</a>
+        }
+        <br />
+    }*@
+
+@*<div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Products.Id" />
+                @foreach (var productDetail in Model.ProductDetails)
+                {
+                    <div class="form-group">
+                        <label asp-for="@productDetail.Size" class="control-label"></label>
+                        <input asp-for="@productDetail.Size" class="form-control" />
+                        <span asp-validation-for="@productDetail.Size" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="@productDetail.AmountInStock" class="control-label"></label>
+                        <input asp-for="@productDetail.AmountInStock" class="form-control" />
+                        <span asp-validation-for="@productDetail.AmountInStock" class="text-danger"></span>
+                    </div>
+                }
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>*@
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
