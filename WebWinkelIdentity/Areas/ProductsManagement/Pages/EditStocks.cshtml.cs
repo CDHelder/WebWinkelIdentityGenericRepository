@@ -47,7 +47,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
             ProductVariations = unitOfWork.ProductRepository.GetProductVariations(Product);
             ProductStocks = unitOfWork.StoreProductRepository.GetAllStoreProducts(ProductVariations);
-            Stores = unitOfWork.StoreRepository.GetList(include: store => store.Include(s => s.Address));
+            Stores = unitOfWork.StoreRepository.GetAll(include: store => store.Include(s => s.Address));
             BeforeChangeStockValues = new();
 
             CurrentStock = false;

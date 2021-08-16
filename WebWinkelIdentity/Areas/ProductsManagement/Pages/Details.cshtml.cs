@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,17 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Roles = "Admin,Employee")]
     public class DetailsModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public DetailsModel(IUnitOfWork unitOfWork)
+        public DetailsModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         public Product Product { get; set; }
@@ -25,22 +28,19 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         public List<Store> Stores { get; set; }
         public bool CurrentStock { get; set; }
 
-        public IActionResult OnGetAsync(int id)
+        public async Task<ActionResult> OnGetAsync(int id)
         {
-            Product = unitOfWork.ProductRepository.Get(
-                filter: p => p.Id == id,
-                include: product => product
-                    .Include(p => p.Brand)
-                    .Include(p => p.Category));
+            var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (Product == null)
+            if (allInfo.Result.Product == null)
             {
                 return NotFound();
             }
 
-            ProductVariations = unitOfWork.ProductRepository.GetProductVariations(Product);
-            ProductStocks = unitOfWork.StoreProductRepository.GetAllStoreProducts(ProductVariations);
-            Stores = unitOfWork.StoreRepository.GetList(include: store => store.Include(s => s.Address));
+            Product = allInfo.Result.Product;
+            ProductVariations = allInfo.Result.ProductVariations;
+            ProductStocks = allInfo.Result.ProductStocks;
+            Stores = allInfo.Result.Stores;
 
             CurrentStock = false;
             foreach (var productStock in ProductStocks)

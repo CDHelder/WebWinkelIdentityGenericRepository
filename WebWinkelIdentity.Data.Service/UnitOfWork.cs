@@ -1,4 +1,5 @@
-﻿using WebWinkelIdentity.Data.Service.Interfaces;
+﻿using WebWinkelIdentity.Core.StoreEntities;
+using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Data.Service.SpecificRepositories;
 
 namespace WebWinkelIdentity.Data.Service
@@ -32,20 +33,12 @@ namespace WebWinkelIdentity.Data.Service
             AddressRepository = addressRepository;
         }
 
+        //TODO: Refactor
         public UOWProductRepository ProductRepository 
         {
-            get
-            {
-                if (this.productRepository == null)
-                {
-                    this.productRepository = new UOWProductRepository(_dbContext);
-                }
-                return productRepository;
-            }
-            private set
-            {
-                this.productRepository = value;
-            }
+            get => productRepository ?? new UOWProductRepository(_dbContext);
+
+            private set => productRepository = value;
         }
 
         public UOWProductStockChangeRepository ProductStockChangeRepository

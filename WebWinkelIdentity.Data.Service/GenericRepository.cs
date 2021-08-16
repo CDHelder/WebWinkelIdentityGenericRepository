@@ -19,18 +19,18 @@ namespace WebWinkelIdentity.Data.Service
             dbSet = dbContext.Set<T>();
         }
 
-        public void Create(T obj)
+        public virtual void Create(T obj)
         {
             dbSet.Add(obj);
         }
 
-        public void Delete(int id)
+        public virtual void Delete(int id)
         {
             var obj = GetById(id);
             dbSet.Remove(obj);
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             if (dbContext.Entry(entity).State == EntityState.Detached)
             {
@@ -39,7 +39,7 @@ namespace WebWinkelIdentity.Data.Service
             dbSet.Remove(entity);
         }
 
-        public T Get(
+        public virtual T Get(
             Expression<Func<T, bool>> filter = null, 
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
@@ -62,17 +62,12 @@ namespace WebWinkelIdentity.Data.Service
                 return query.FirstOrDefault();
         }
 
-        public List<T> GetAll()
-        {
-            return dbSet.ToList();
-        }
-
-        public T GetById(int id)
+        public virtual T GetById(int id)
         {
             return dbSet.Find(id);
         }
 
-        public List<T> GetList(
+        public virtual List<T> GetAll(
             Expression<Func<T, bool>> filter = null, 
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
@@ -95,13 +90,15 @@ namespace WebWinkelIdentity.Data.Service
                 return query.ToList();
         }
 
-        public void Update(T obj)
+        public virtual void Update(T obj)
         {
             dbSet.Attach(obj);
             dbContext.Entry(obj).State = EntityState.Modified;
+
+            dbSet.Update(obj);
         }
 
-        public void Update(List<T> objs)
+        public virtual void Update(List<T> objs)
         {
             dbSet.UpdateRange(objs);
         }

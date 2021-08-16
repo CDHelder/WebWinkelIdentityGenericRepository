@@ -35,7 +35,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         [TempData]
         public string AllTextData { get; set; }
 
-        //TODO: Check if new Repository works correctly
         public IActionResult OnGet()
         {
             var AllTextDataArray = AllTextData.Split("\n");

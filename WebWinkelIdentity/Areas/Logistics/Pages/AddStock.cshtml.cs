@@ -36,7 +36,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public IActionResult OnGet()
         {
             AllText = null;
-            AllStores = unitOfWork.StoreRepository.GetList(
+            AllStores = unitOfWork.StoreRepository.GetAll(
                 include: store => store
                     .Include(s => s.Address))
                 .Select(s =>

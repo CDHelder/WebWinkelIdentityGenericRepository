@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace WebWinkelIdentity
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("WebWinkelIdentityDb")));
+
+            services.AddMediatR(typeof(Startup).Assembly);
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

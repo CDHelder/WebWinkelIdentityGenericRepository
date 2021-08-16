@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,17 +7,18 @@ using System.Collections.Generic;
 using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public EditModel(IUnitOfWork unitOfWork)
+        public EditModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -28,15 +30,17 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         //VB = Input: 15,95 Veranderd naar: 1595
         public IActionResult OnGetAsync(int id)
         {
-            Product = unitOfWork.ProductRepository.GetById(id);
+            var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (Product == null)
+            if (allInfo.Result.Product == null)
             {
                 return NotFound();
             }
 
-            ProductVariations = unitOfWork.ProductRepository.GetProductVariations(Product);
+            Product = allInfo.Result.Product;
+            ProductVariations = allInfo.Result.ProductVariations;
 
+            //TODO: Create AllBrandAndCategoryQuery (Mediator)
             ViewData["BrandId"] = new SelectList(unitOfWork.BrandRepository.GetAll(), "Id", "Name");
             ViewData["CategoryId"] = new SelectList(unitOfWork.CategoryRepository.GetAll(), "Id", "Name");
 
@@ -50,6 +54,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
                 return Page();
             }
 
+            //Create UpdateAllProductVariantsCommand (MediatoR)
             unitOfWork.ProductRepository.UpdateProductProperties(Product, ProductVariations);
 
             if (unitOfWork.SaveChanges() == true)

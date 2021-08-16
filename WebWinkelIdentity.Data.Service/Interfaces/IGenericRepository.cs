@@ -10,8 +10,7 @@ namespace WebWinkelIdentity.Data.Service.Interfaces
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        List<TEntity> GetAll();
-        List<TEntity> GetList(
+        List<TEntity> GetAll(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>,IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null);

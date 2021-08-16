@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,17 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Policy = "AdminOnly")]
     public class DeleteModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public DeleteModel(IUnitOfWork unitOfWork)
+        public DeleteModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -29,16 +33,17 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
         public IActionResult OnGetAsync(int id)
         {
-            Product = unitOfWork.ProductRepository.GetById(id);
+            var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (Product == null)
+            if (allInfo.Result.Product == null)
             {
                 return NotFound();
             }
 
-            ProductVariations = unitOfWork.ProductRepository.GetProductVariations(Product);
-            ProductStocks = unitOfWork.StoreProductRepository.GetAllStoreProducts(ProductVariations);
-            Stores = unitOfWork.StoreRepository.GetList(include: store => store.Include( s => s.Address));
+            Product = allInfo.Result.Product;
+            ProductVariations = allInfo.Result.ProductVariations;
+            ProductStocks = allInfo.Result.ProductStocks;
+            Stores = allInfo.Result.Stores;
 
             CurrentStock = false;
             foreach (var productStock in ProductStocks)
@@ -52,20 +57,13 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
             return Page();
         }
 
-        public IActionResult OnPostAsync(int id)
+        public async Task<ActionResult> OnPostAsync(int id)
         {
-            var product = unitOfWork.ProductRepository.GetById(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            //TODO: Maak de delete functie zo dat ie ook de productvariants verwijderd
+            var response = await mediator.Send(new ProductDeleteCommand(id));
 
-            unitOfWork.ProductRepository.Delete(id);
-
-            if (unitOfWork.SaveChanges() == true)
-            {
+            if (response)
                 return RedirectToPage("./Index");
-            }
 
             return Page();
         }
