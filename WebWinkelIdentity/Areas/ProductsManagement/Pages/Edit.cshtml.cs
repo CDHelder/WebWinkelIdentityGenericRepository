@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
@@ -40,9 +41,9 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
             Product = allInfo.Result.Product;
             ProductVariations = allInfo.Result.ProductVariations;
 
-            //TODO: Create AllBrandAndCategoryQuery (Mediator)
-            ViewData["BrandId"] = new SelectList(unitOfWork.BrandRepository.GetAll(), "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(unitOfWork.CategoryRepository.GetAll(), "Id", "Name");
+            var allBrandsAndCategories = mediator.Send(new AllBrandsAndCategoriesQuery());
+            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Brands, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Categories, "Id", "Name");
 
             return Page();
         }
@@ -54,10 +55,9 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
                 return Page();
             }
 
-            //Create UpdateAllProductVariantsCommand (MediatoR)
-            unitOfWork.ProductRepository.UpdateProductProperties(Product, ProductVariations);
+            var result = mediator.Send(new UpdateProductVariationsCommand(Product, ProductVariations));
 
-            if (unitOfWork.SaveChanges() == true)
+            if (result.Result == true)
             {
                 return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }

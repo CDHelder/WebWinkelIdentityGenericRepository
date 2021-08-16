@@ -1,26 +1,31 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Policy = "AdminOnly")]
     public class CreateModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public CreateModel(IUnitOfWork unitOfWork)
+        public CreateModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         public IActionResult OnGet()
         {
-            ViewData["BrandId"] = new SelectList(unitOfWork.BrandRepository.GetAll(), "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(unitOfWork.CategoryRepository.GetAll(), "Id", "Name");
+            var allBrandsAndCategories = mediator.Send(new AllBrandsAndCategoriesQuery());
+
+            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Brands, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Categories, "Id", "Name");
             return Page();
         }
 
@@ -34,9 +39,10 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
                 return Page();
             }
 
-            unitOfWork.ProductRepository.Create(Product);
+            //TODO: Maak Create Command (mediator)
+            var result = mediator.Send(new CreateProductCommand(Product));
 
-            if (unitOfWork.SaveChanges() == true)
+            if (result.Result == true)
             {
                 return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }

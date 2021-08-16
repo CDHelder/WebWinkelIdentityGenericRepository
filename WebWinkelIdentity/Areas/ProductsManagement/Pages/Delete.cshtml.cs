@@ -59,8 +59,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
         public async Task<ActionResult> OnPostAsync(int id)
         {
-            //TODO: Maak de delete functie zo dat ie ook de productvariants verwijderd
-            var response = await mediator.Send(new ProductDeleteCommand(id));
+            var response = await mediator.Send(new DeleteProductVariationsCommand(id));
 
             if (response)
                 return RedirectToPage("./Index");

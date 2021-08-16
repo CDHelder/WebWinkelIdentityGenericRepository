@@ -102,5 +102,10 @@ namespace WebWinkelIdentity.Data.Service
         {
             dbSet.UpdateRange(objs);
         }
+
+        public void Delete(List<T> entities)
+        {
+            dbSet.RemoveRange(entities);
+        }
     }
 }

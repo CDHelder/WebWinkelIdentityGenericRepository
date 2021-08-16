@@ -4,27 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    //TODO: Implement Alle Commands
-    public record ProductDeleteCommand(int Id) : IRequest<bool>
+    public record CreateProductCommand(Product Product) : IRequest<bool>
     {
 
     }
-    public class ProductDeleteCommandHandler : IRequestHandler<ProductDeleteCommand, bool>
+
+    public class ProductCreateCommandHandler : IRequestHandler<CreateProductCommand, bool>
     {
         private readonly IUnitOfWork unitOfWork;
 
-        public ProductDeleteCommandHandler(IUnitOfWork unitOfWork)
+        public ProductCreateCommandHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
-        public Task<bool> Handle(ProductDeleteCommand request, CancellationToken cancellationToken)
+
+        public Task<bool> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = unitOfWork.ProductRepository.GetById(request.Id);
-            unitOfWork.ProductRepository.Delete(product);
+            unitOfWork.ProductRepository.Create(request.Product);
 
             var result = unitOfWork.SaveChanges();
             return Task.FromResult(result);

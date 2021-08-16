@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Roles = "Admin")]
     public class EditStocksModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public EditStocksModel(IUnitOfWork unitOfWork)
+        public EditStocksModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -34,20 +34,18 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
         public IActionResult OnGetAsync(int id)
         {
-            Product = unitOfWork.ProductRepository.Get(
-                filter: p => p.Id == id,
-                include: product => product
-                    .Include(p => p.Brand)
-                    .Include(p => p.Category));
+            var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (Product == null)
+            if (allInfo.Result.Product == null)
             {
                 return NotFound();
             }
 
-            ProductVariations = unitOfWork.ProductRepository.GetProductVariations(Product);
-            ProductStocks = unitOfWork.StoreProductRepository.GetAllStoreProducts(ProductVariations);
-            Stores = unitOfWork.StoreRepository.GetAll(include: store => store.Include(s => s.Address));
+            Product = allInfo.Result.Product;
+            ProductVariations = allInfo.Result.ProductVariations;
+            ProductStocks = allInfo.Result.ProductStocks;
+            Stores = allInfo.Result.Stores;
+
             BeforeChangeStockValues = new();
 
             CurrentStock = false;
@@ -70,37 +68,20 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
                 return Page();
             }
 
-            unitOfWork.StoreProductRepository.Update(ProductStocks);
+            var result = mediator.Send(new UpdateStoreProductsCommand(ProductStocks));
 
-            if (unitOfWork.SaveChanges() == true)
+            if (result.Result == true)
             {
-                CreateAndSaveProductStockChanges(beforeChangeStockValues);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
 
-                if (unitOfWork.SaveChanges() == true)
+                var resultPSC = mediator.Send(new CreateAllProductStockChangesCommand(ProductStocks, beforeChangeStockValues, userId));
+
+                if (resultPSC.Result == true)
                     return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }
 
             return Page();
 
-        }
-
-        private void CreateAndSaveProductStockChanges(Dictionary<int, int> beforeChangeStockValues)
-        {
-            foreach (var storeProduct in ProductStocks)
-            {
-                if (storeProduct.Quantity - beforeChangeStockValues[storeProduct.Id] != 0)
-                {
-                    var PSC = new ProductStockChange
-                    {
-                        UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
-                        DateChanged = DateTime.Now,
-                        StockChange = storeProduct.Quantity - beforeChangeStockValues[storeProduct.Id],
-                        StoreProductId = storeProduct.Id
-                    };
-
-                    unitOfWork.ProductStockChangeRepository.Create(PSC);
-                }
-            }
         }
     }
 }

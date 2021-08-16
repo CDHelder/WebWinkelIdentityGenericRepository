@@ -1,28 +1,30 @@
 ﻿using System.Collections.Generic;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 {
     [Authorize(Roles = "Admin,Employee")]
     public class IndexModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public IndexModel(IUnitOfWork unitOfWork)
+        public IndexModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         public List<Product> Product { get;set; }
 
         public void OnGetAsync()
         {
-            Product = unitOfWork.ProductRepository.GetUniqueListProducts();
+            Product = mediator.Send(new UniqueProductListQuery()).Result;
         }
     }
 }
