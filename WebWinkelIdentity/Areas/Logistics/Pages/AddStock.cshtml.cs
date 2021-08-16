@@ -2,22 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class AddStockModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public AddStockModel(IUnitOfWork unitOfWork)
+        public AddStockModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -36,15 +38,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public IActionResult OnGet()
         {
             AllText = null;
-            AllStores = unitOfWork.StoreRepository.GetAll(
-                include: store => store
-                    .Include(s => s.Address))
-                .Select(s =>
-            new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = s.Address.City
-            }).ToList();
+            AllStores = mediator.Send(new AllStoresSelectListItemsQuery()).Result;
 
             return Page();
         }
@@ -65,19 +59,19 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllText = AllText.Replace("\r", "");
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            if (DoesStoreExcist() == false)
-            {
-                FormResult = $"Error: Couldn't find store with id: {SelectedStoreId}";
-                return Page();
-            }
+            //TODO: Check if Mediator is working correctly
+            //Geen errors en hij runt gwn, wel nog even debuggen
+            var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
 
-            var distinctList = list.Distinct();
-            foreach (var productId in distinctList)
+            if (result.Result.AllProductsAndStoreExcist == false)
             {
-                if(DoesProductExcist(productId) == false)
+                if (result.Result.StoreId != 0)
                 {
-                    FormResult = $"Error: Couldnt find product with id:{productId} in the database";
-                    return Page();
+                    FormResult = result.Result.ErrorMessage;
+                }
+                else if (result.Result.NotExcistingProductIds != null)
+                {
+                    FormResult = result.Result.ErrorMessage;
                 }
             }
 
@@ -86,30 +80,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
             return RedirectToPage("/ConfirmAddStock");
 
-        }
-
-        private bool DoesProductExcist(string productId)
-        {
-            if (productId == "")
-                return false;
-
-            var product = unitOfWork.ProductRepository.GetById(int.Parse(productId));
-            if (product == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool DoesStoreExcist()
-        {
-            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
-            if (store == null)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }
