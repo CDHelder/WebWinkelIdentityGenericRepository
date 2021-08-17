@@ -66,6 +66,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 return Task.FromResult(productsAndStoreExcistRepsonse);
             }
 
+            //Return true if All Validation Passes
             return Task.FromResult(new ProductsAndStoreExcistRepsonse(true));
         }
     }

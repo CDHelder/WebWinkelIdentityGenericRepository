@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class ConfirmAddStockModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public ConfirmAddStockModel(IUnitOfWork unitOfWork)
+        public ConfirmAddStockModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -39,9 +41,9 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         {
             var AllTextDataArray = AllTextData.Split("\n");
             Array.Sort(AllTextDataArray);
-
             AllTextDataList = AllTextDataArray.Select(x => int.Parse(x)).ToList();
-            StoreProducts = unitOfWork.StoreProductRepository.GetAllStoreProducts(AllTextDataList, StoreId);
+
+            StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, StoreId)).Result.Value;
             PostStoreId = StoreId;
 
             return Page();

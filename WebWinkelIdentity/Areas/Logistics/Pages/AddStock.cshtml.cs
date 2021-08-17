@@ -65,14 +65,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
             if (result.Result.AllProductsAndStoreExcist == false)
             {
-                if (result.Result.StoreId != 0)
-                {
-                    FormResult = result.Result.ErrorMessage;
-                }
-                else if (result.Result.NotExcistingProductIds != null)
-                {
-                    FormResult = result.Result.ErrorMessage;
-                }
+                FormResult = result.Result.ErrorMessage;
             }
 
             AllTextData = string.Join("\n", list);

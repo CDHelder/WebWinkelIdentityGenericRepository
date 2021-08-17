@@ -2,21 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class RemoveStockModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public RemoveStockModel(IUnitOfWork unitOfWork)
+        public RemoveStockModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -35,19 +37,12 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public IActionResult OnGet()
         {
             AllText = null;
-            AllStores = unitOfWork.StoreRepository.GetAll(include: sp => sp
-                .Include(s => s.Address))
-                .Select(s =>
-            new SelectListItem
-            {
-                Value = s.Id.ToString(),
-                Text = s.Address.City
-            }).ToList();
+            AllStores = mediator.Send(new AllStoresSelectListItemsQuery()).Result;
 
             return Page();
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPost()
         {
             if (AllText == null)
             {
@@ -63,69 +58,37 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllText = AllText.Replace("\r", "");
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            if (DoesStoreExcist() == false)
+            //TODO: Check if Mediator is working correctly
+            //Geen errors en hij runt gwn, wel nog even debuggen
+            var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
+
+            if (result.Result.AllProductsAndStoreExcist == false)
             {
-                FormResult = $"Error: Couldn't find store with id: {SelectedStoreId}";
+                FormResult = result.Result.ErrorMessage;
                 return Page();
             }
 
-            foreach (var productId in list.Distinct())
-            {
-                if (DoesProductExcist(productId) == false)
-                {
-                    FormResult = $"Error: Couldnt find product with id:{productId} in the database";
-                    return Page();
-                }
-            }
+            //TODO: Check if Mediator is working correctly
+            var storeId = int.Parse(SelectedStoreId);
+            var productStockChangeResult = await mediator.Send(new BoolProductStockChangeExcistsQuery(list, storeId));
 
-            //TODO: Check if DoesEnteredStockChangeExcist function works correctly
-            if (DoesEnteredStockChangeExcist(list) == false)
+            if(productStockChangeResult.IsFailure)
             {
+                FormResult = productStockChangeResult.Error;
                 return Page();
             }
+
+            //if (productStockChangeResult.Result.DoProductsExcist == false)
+            //{
+            //    FormResult = productStockChangeResult.Result.ErrorMessage;
+            //    return Page();
+            //}
 
             AllTextData = AllText;
             StoreId = int.Parse(SelectedStoreId);
 
             return RedirectToPage("/ConfirmRemoveStock");
 
-        }
-
-        private bool DoesEnteredStockChangeExcist(string[] list)
-        {
-            var intList = list.Select(x => int.Parse(x)).ToList();
-            foreach (var id in unitOfWork.StoreProductRepository.GetAllStoreProducts(intList, int.Parse(SelectedStoreId)))
-            {
-                var enteredStockChange = intList.Where(adat => adat == id.ProductId).Count();
-                var currentStock = id.Quantity;
-                if (currentStock < enteredStockChange)
-                {
-                    FormResult = $"Error: Cant delete {enteredStockChange} products with id:{id.ProductId} " +
-                        $"because current stock is {currentStock}";
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool DoesProductExcist(string productId)
-        {
-            var product = unitOfWork.ProductRepository.GetById(int.Parse(productId));
-            if (product == null)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool DoesStoreExcist()
-        {
-            var store = unitOfWork.StoreRepository.GetById(int.Parse(SelectedStoreId));
-            if (store == null)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }
