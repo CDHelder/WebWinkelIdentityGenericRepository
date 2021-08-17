@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class ConfirmRemoveStockModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public ConfirmRemoveStockModel(IUnitOfWork unitOfWork)
+        public ConfirmRemoveStockModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -41,7 +44,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             Array.Sort(AllTextDataArray);
 
             AllTextDataList = AllTextDataArray.Select(x => int.Parse(x)).ToList();
-            StoreProducts = unitOfWork.StoreProductRepository.GetAllStoreProducts(AllTextDataList, StoreId);
+            StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, StoreId)).Result.Value;
             PostStoreId = StoreId;
 
             return Page();
@@ -49,47 +52,18 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
         public IActionResult OnPost()
         {
-            foreach (var storeProduct in StoreProducts)
+            //TODO: Check if mediator works correctly
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false));
+
+            if (result.Result.IsFailure)
             {
-                var removeQuantity = AllTextDataList.Where(x => x == storeProduct.ProductId).Count();
-                storeProduct.Quantity -= removeQuantity;
-
-                unitOfWork.StoreProductRepository.Update(storeProduct);
-                if (unitOfWork.SaveChanges() == false)
-                {
-                    FormResult = $"Error: Couldnt save product with id:{storeProduct.ProductId} in the database";
-                    return Page();
-                }
-
-                if(CreateAndSaveProductStockChanges(storeProduct, removeQuantity) == false)
-                {
-                    FormResult = $"Error: Couldnt log the stock changes made to product with id:{storeProduct.ProductId}";
-                    return Page();
-                }
+                FormResult = result.Result.Error;
             }
 
             AllTextData = string.Join("\n", AllTextDataList);
             SuccesStoreId = PostStoreId;
             return RedirectToPage("/SuccesfullyRemovedStock");
-        }
-
-        private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int removeQuantity)
-        {
-            ProductStockChange PSC = new ProductStockChange
-            {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
-                DateChanged = DateTime.Now,
-                StoreProductId = storeProduct.Id,
-                StockChange = -removeQuantity
-            };
-
-            unitOfWork.ProductStockChangeRepository.Create(PSC);
-            if (unitOfWork.SaveChanges() == false)
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

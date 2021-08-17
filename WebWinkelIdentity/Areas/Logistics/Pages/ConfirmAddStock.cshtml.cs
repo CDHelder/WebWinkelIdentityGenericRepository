@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
@@ -51,47 +52,18 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
         public IActionResult OnPost()
         {
-            foreach (var storeProduct in StoreProducts)
+            //TODO: Check if mediator works correctly
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, true));
+
+            if (result.Result.IsFailure)
             {
-                var addQuantity = AllTextDataList.Where(x => x == storeProduct.ProductId).Count();
-                storeProduct.Quantity += addQuantity;
-
-                unitOfWork.StoreProductRepository.Update(storeProduct);
-                if (unitOfWork.SaveChanges() == false)
-                {
-                    FormResult = $"Error: Couldnt save changes to product with id:{storeProduct.ProductId}";
-                    return Page();
-                }
-
-                if(CreateAndSaveProductStockChanges(storeProduct, addQuantity) == false)
-                {
-                    FormResult = $"Error: Couldnt log the changes made to product with id:{storeProduct.ProductId}";
-                    return Page();
-                }
+                FormResult = result.Result.Error;
             }
 
             AllTextData = string.Join("\n", AllTextDataList);
             SuccesStoreId = PostStoreId;
             return RedirectToPage("/SuccesfullyAddedStock");
-        }
-
-        private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int addQuantity)
-        {
-            ProductStockChange PSC = new ProductStockChange
-            {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString()),
-                DateChanged = DateTime.Now,
-                StoreProductId = storeProduct.Id,
-                StockChange = addQuantity
-            };
-
-            unitOfWork.ProductStockChangeRepository.Create(PSC);
-            if (unitOfWork.SaveChanges() == false)
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

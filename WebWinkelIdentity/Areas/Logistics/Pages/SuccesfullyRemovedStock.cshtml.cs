@@ -2,20 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class SuccesfullyRemovedStockModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public SuccesfullyRemovedStockModel(IUnitOfWork unitOfWork)
+        public SuccesfullyRemovedStockModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         [BindProperty]
@@ -34,7 +36,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             Array.Sort(AllTextDataArray);
 
             AllTextDataList = AllTextDataArray.Select(x => int.Parse(x)).ToList();
-            StoreProducts = unitOfWork.StoreProductRepository.GetAllStoreProducts(AllTextDataList, SuccesStoreId);
+            StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, SuccesStoreId)).Result.Value;
 
             return Page();
         }

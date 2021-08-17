@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data;
 using WebWinkelIdentity.Data.Service.Interfaces;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
     public class AllStockChangesModel : PageModel
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IMediator mediator;
 
-        public AllStockChangesModel(IUnitOfWork unitOfWork)
+        public AllStockChangesModel(IMediator mediator)
         {
-            this.unitOfWork = unitOfWork;
+            this.mediator = mediator;
         }
 
         //TODO: Maak rollback functie om gemaakte veranderingen terug te veranderen
@@ -25,7 +27,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 
         public void OnGetAsync()
         {
-            ProductStockChange = unitOfWork.ProductStockChangeRepository.GetAllProductStockChangesAndIncludes();
+            ProductStockChange = mediator.Send(new AllProductStockChangesStockQuery()).Result.Value;
         }
     }
 }
