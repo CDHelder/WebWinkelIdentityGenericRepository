@@ -20,6 +20,7 @@ namespace WebWinkelIdentity.Data.Service.Interfaces
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null);
         TEntity GetById(int id);
         void Create(TEntity obj);
+        void Create(List<TEntity> objs);
         void Update(TEntity obj);
         void Update(List<TEntity> objs);
         void Delete(int id);

@@ -87,7 +87,7 @@
                 @if (User.IsInRole("Admin"))
                 {
                 <a>|</a>
-                <a asp-area="ProductsManagement" asp-page="./Delete" asp-route-id="@item.Id">Delete Product</a>
+                <a asp-area="Logistics" asp-page="./ConfirmRollbackStockChanges" asp-route-id="@item.Id">Rollback change</a>
                 }
             </td>
         </tr>

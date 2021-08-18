@@ -49,6 +49,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Product.Size" class="control-label"></label>
+                <label style="color:grey" class="control-label">Create multiple product variations at once by adding 
+                    a ", " separator <br /> Example: S, M, L, XL</label>
                 <input asp-for="Product.Size" class="form-control" />
                 <span asp-validation-for="Product.Size" class="text-danger"></span>
             </div>

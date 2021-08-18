@@ -107,5 +107,10 @@ namespace WebWinkelIdentity.Data.Service
         {
             dbSet.RemoveRange(entities);
         }
+
+        public void Create(List<T> objs)
+        {
+            dbSet.AddRange(objs);
+        }
     }
 }

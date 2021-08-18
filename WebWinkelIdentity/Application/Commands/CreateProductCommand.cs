@@ -26,7 +26,30 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
         public Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            unitOfWork.ProductRepository.Create(request.Product);
+            var productsSizes = request.Product.Size.Trim().Split(",");
+            if (productsSizes.Count() > 1)
+            {
+                var productVariations = new List<Product>();
+                foreach (var size in productsSizes)
+                {
+                    productVariations.Add(new Product 
+                    { 
+                        BrandId = request.Product.BrandId,
+                        CategoryId = request.Product.CategoryId,
+                        Color = request.Product.Color,
+                        Description = request.Product.Description,
+                        Fabric = request.Product.Fabric,
+                        Name = request.Product.Name,
+                        Price = request.Product.Price,
+                        Size = size
+                    });
+                }
+                unitOfWork.ProductRepository.Create(productVariations);
+            }
+            else
+            {
+                unitOfWork.ProductRepository.Create(request.Product);
+            }
 
             var result = unitOfWork.SaveChanges();
             if (result == true)
