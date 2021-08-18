@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    public record CreateProductCommand(Product Product) : IRequest<bool>
+    public record CreateProductCommand(Product Product) : IRequest<Result>
     {
 
     }
 
-    public class ProductCreateCommandHandler : IRequestHandler<CreateProductCommand, bool>
+    public class ProductCreateCommandHandler : IRequestHandler<CreateProductCommand, Result>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -23,12 +24,16 @@ namespace WebWinkelIdentity.Web.Application.Commands
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<bool> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             unitOfWork.ProductRepository.Create(request.Product);
 
             var result = unitOfWork.SaveChanges();
-            return Task.FromResult(result);
+            if (result == true)
+                return Task.FromResult(Result.Success());
+
+            var errorMessage = $"Product {request.Product.Name} with id: {request.Product.Id} couldn't be created and saved in the database";
+            return Task.FromResult(Result.Failure(errorMessage));
         }
     }
 }

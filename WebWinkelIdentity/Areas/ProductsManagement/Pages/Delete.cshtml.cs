@@ -35,15 +35,15 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         {
             var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (allInfo.Result.Product == null)
+            if (allInfo.Result.Value.Product == null)
             {
                 return NotFound();
             }
 
-            Product = allInfo.Result.Product;
-            ProductVariations = allInfo.Result.ProductVariations;
-            ProductStocks = allInfo.Result.ProductStocks;
-            Stores = allInfo.Result.Stores;
+            Product = allInfo.Result.Value.Product;
+            ProductVariations = allInfo.Result.Value.ProductVariations;
+            ProductStocks = allInfo.Result.Value.ProductStocks;
+            Stores = allInfo.Result.Value.Stores;
 
             CurrentStock = false;
             foreach (var productStock in ProductStocks)
@@ -61,7 +61,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         {
             var response = await mediator.Send(new DeleteProductVariationsCommand(id));
 
-            if (response)
+            if (response.IsSuccess)
                 return RedirectToPage("./Index");
 
             return Page();

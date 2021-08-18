@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    public record UpdateProductVariationsCommand(Product Product, List<Product> Products) : IRequest<bool>
+    public record UpdateProductVariationsCommand(Product Product, List<Product> Products) : IRequest<Result>
     {
     }
 
-    public class UpdateProductVariationsCommandHandler : IRequestHandler<UpdateProductVariationsCommand, bool>
+    public class UpdateProductVariationsCommandHandler : IRequestHandler<UpdateProductVariationsCommand, Result>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -22,12 +23,16 @@ namespace WebWinkelIdentity.Web.Application.Commands
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<bool> Handle(UpdateProductVariationsCommand request, CancellationToken cancellationToken)
+        public Task<Result> Handle(UpdateProductVariationsCommand request, CancellationToken cancellationToken)
         {
             unitOfWork.ProductRepository.UpdateProductProperties(request.Product, request.Products);
 
             var result = unitOfWork.SaveChanges();
-            return Task.FromResult(result);
+            if (result == true)
+                return Task.FromResult(Result.Success());
+
+            var errorMessage = $"Couldn't update product variations of product: {request.Product.Name} with id: {request.Product.Id}";
+            return Task.FromResult(Result.Failure(errorMessage));
         }
     }
 }

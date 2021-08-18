@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public class UniqueProductListQuery : IRequest<List<Product>>
+    public class UniqueProductListQuery : IRequest<Result<List<Product>>>
     {
-
     }
-    public class UniqueProductListQueryHandler : IRequestHandler<UniqueProductListQuery, List<Product>>
+
+    public class UniqueProductListQueryHandler : IRequestHandler<UniqueProductListQuery, Result<List<Product>>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -22,10 +23,10 @@ namespace WebWinkelIdentity.Web.Application.Queries
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<List<Product>> Handle(UniqueProductListQuery request, CancellationToken cancellationToken)
+        public Task<Result<List<Product>>> Handle(UniqueProductListQuery request, CancellationToken cancellationToken)
         {
             var products = unitOfWork.ProductRepository.GetUniqueListProducts();
-            return Task.FromResult(products);
+            return Task.FromResult(Result.Success(products));
         }
     }
 }

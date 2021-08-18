@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,11 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public record BoolProductsAndStoreExcistValidationQuery(IEnumerable<string> IdsList, string StoreId) : IRequest<ProductsAndStoreExcistRepsonse>
+    public record BoolProductsAndStoreExcistValidationQuery(IEnumerable<string> IdsList, string StoreId) : IRequest<Result>
     {
     }
 
-    public record ProductsAndStoreExcistRepsonse(bool AllProductsAndStoreExcist, List<int> NotExcistingProductIds = null, int StoreId = 0, string ErrorMessage = null)
-    {
-    }
-
-    public class BoolProductsAndStoreExcistValidationQueryHandler : IRequestHandler<BoolProductsAndStoreExcistValidationQuery, ProductsAndStoreExcistRepsonse>
+    public class BoolProductsAndStoreExcistValidationQueryHandler : IRequestHandler<BoolProductsAndStoreExcistValidationQuery, Result>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -25,16 +22,15 @@ namespace WebWinkelIdentity.Web.Application.Queries
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<ProductsAndStoreExcistRepsonse> Handle(BoolProductsAndStoreExcistValidationQuery request, CancellationToken cancellationToken)
+        public Task<Result> Handle(BoolProductsAndStoreExcistValidationQuery request, CancellationToken cancellationToken)
         {
             //Store Validation
             var store = unitOfWork.StoreRepository.GetById(int.Parse(request.StoreId));
 
             if (store == null)
-            {
-                var productsAndStoreExcistRepsonse = new ProductsAndStoreExcistRepsonse(false, StoreId: int.Parse(request.StoreId),
-                    ErrorMessage: $"Error: Couldn't find store with id: {request.StoreId}");
-                return Task.FromResult(productsAndStoreExcistRepsonse);
+            { 
+                var errorMessage = $"Error: Couldn't find store with id: {request.StoreId}";
+                return Task.FromResult(Result.Failure(errorMessage));
             }
 
             //ProductIds Validation
@@ -60,14 +56,12 @@ namespace WebWinkelIdentity.Web.Application.Queries
             if (notExcistingProductIds.Count > 0)
             {
                 var productIds = string.Join(", ", notExcistingProductIds.Select(i => i.ToString()).ToArray());
-
-                var productsAndStoreExcistRepsonse = new ProductsAndStoreExcistRepsonse(false, notExcistingProductIds, int.Parse(request.StoreId),
-                    ErrorMessage: $"Error: Couldnt find product with ids:{notExcistingProductIds} in the database");
-                return Task.FromResult(productsAndStoreExcistRepsonse);
+                var errorMessage = $"Error: Couldnt find product with ids: {productIds} in the database";
+                return Task.FromResult(Result.Failure(errorMessage));
             }
 
             //Return true if All Validation Passes
-            return Task.FromResult(new ProductsAndStoreExcistRepsonse(true));
+            return Task.FromResult(Result.Success());
         }
     }
 }

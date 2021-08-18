@@ -24,8 +24,8 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         {
             var allBrandsAndCategories = mediator.Send(new AllBrandsAndCategoriesQuery());
 
-            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Brands, "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Categories, "Id", "Name");
+            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Value.Brands, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Value.Categories, "Id", "Name");
             return Page();
         }
 
@@ -42,7 +42,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
             //TODO: Maak Create Command (mediator)
             var result = mediator.Send(new CreateProductCommand(Product));
 
-            if (result.Result == true)
+            if (result.Result.IsSuccess)
             {
                 return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }

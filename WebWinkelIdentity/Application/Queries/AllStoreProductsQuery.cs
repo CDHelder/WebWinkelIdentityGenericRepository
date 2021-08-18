@@ -25,9 +25,9 @@ namespace WebWinkelIdentity.Web.Application.Queries
 
         public Task<Result<List<StoreProduct>>> Handle(AllStoreProductsQuery request, CancellationToken cancellationToken)
         {
-            Result<List<StoreProduct>> storeProducts = unitOfWork.StoreProductRepository.GetAllStoreProducts(request.AllProductIds, request.StoreId);
+            var storeProducts = unitOfWork.StoreProductRepository.GetAllStoreProducts(request.AllProductIds, request.StoreId);
 
-            return Task.FromResult(storeProducts);
+            return Task.FromResult(Result.Success(storeProducts));
         }
     }
 }

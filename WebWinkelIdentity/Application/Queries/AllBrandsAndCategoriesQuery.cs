@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public class AllBrandsAndCategoriesQuery : IRequest<AllBrandsAndCategories>
+    public class AllBrandsAndCategoriesQuery : IRequest<Result<AllBrandsAndCategories>>
     {
 
     }
 
-    public class AllBrandsAndCategoriesHandler : IRequestHandler<AllBrandsAndCategoriesQuery, AllBrandsAndCategories>
+    public class AllBrandsAndCategoriesHandler : IRequestHandler<AllBrandsAndCategoriesQuery, Result<AllBrandsAndCategories>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -23,7 +24,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<AllBrandsAndCategories> Handle(AllBrandsAndCategoriesQuery request, CancellationToken cancellationToken)
+        public Task<Result<AllBrandsAndCategories>> Handle(AllBrandsAndCategoriesQuery request, CancellationToken cancellationToken)
         {
             var allBrandsAndCategories = new AllBrandsAndCategories
                 (
@@ -31,7 +32,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 unitOfWork.BrandRepository.GetAll()
                 );
 
-            return Task.FromResult(allBrandsAndCategories);
+            return Task.FromResult(Result.Success(allBrandsAndCategories));
         }
 
     }

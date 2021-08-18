@@ -24,7 +24,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
         public void OnGetAsync()
         {
-            Product = mediator.Send(new UniqueProductListQuery()).Result;
+            Product = mediator.Send(new UniqueProductListQuery()).Result.Value;
         }
     }
 }

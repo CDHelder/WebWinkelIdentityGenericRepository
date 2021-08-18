@@ -33,17 +33,17 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         {
             var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (allInfo.Result.Product == null)
+            if (allInfo.Result.Value.Product == null)
             {
                 return NotFound();
             }
 
-            Product = allInfo.Result.Product;
-            ProductVariations = allInfo.Result.ProductVariations;
+            Product = allInfo.Result.Value.Product;
+            ProductVariations = allInfo.Result.Value.ProductVariations;
 
             var allBrandsAndCategories = mediator.Send(new AllBrandsAndCategoriesQuery());
-            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Brands, "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Categories, "Id", "Name");
+            ViewData["BrandId"] = new SelectList(allBrandsAndCategories.Result.Value.Brands, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(allBrandsAndCategories.Result.Value.Categories, "Id", "Name");
 
             return Page();
         }
@@ -57,7 +57,7 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
             var result = mediator.Send(new UpdateProductVariationsCommand(Product, ProductVariations));
 
-            if (result.Result == true)
+            if (result.Result.IsSuccess)
             {
                 return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }

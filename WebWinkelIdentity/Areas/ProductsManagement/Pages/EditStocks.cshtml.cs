@@ -36,15 +36,15 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
         {
             var allInfo = mediator.Send(new AllProductInformationQuery(id));
 
-            if (allInfo.Result.Product == null)
+            if (allInfo.Result.Value.Product == null)
             {
                 return NotFound();
             }
 
-            Product = allInfo.Result.Product;
-            ProductVariations = allInfo.Result.ProductVariations;
-            ProductStocks = allInfo.Result.ProductStocks;
-            Stores = allInfo.Result.Stores;
+            Product = allInfo.Result.Value.Product;
+            ProductVariations = allInfo.Result.Value.ProductVariations;
+            ProductStocks = allInfo.Result.Value.ProductStocks;
+            Stores = allInfo.Result.Value.Stores;
 
             BeforeChangeStockValues = new();
 
@@ -70,13 +70,13 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
 
             var result = mediator.Send(new UpdateStoreProductsCommand(ProductStocks));
 
-            if (result.Result == true)
+            if (result.Result.IsSuccess)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
 
                 var resultPSC = mediator.Send(new CreateAllProductStockChangesCommand(ProductStocks, beforeChangeStockValues, userId));
 
-                if (resultPSC.Result == true)
+                if (resultPSC.Result.IsSuccess)
                     return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
             }
 

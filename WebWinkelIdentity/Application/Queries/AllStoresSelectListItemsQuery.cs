@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,11 +11,11 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public class AllStoresSelectListItemsQuery : IRequest<List<SelectListItem>>
+    public class AllStoresSelectListItemsQuery : IRequest<Result<List<SelectListItem>>>
     {
     }
 
-    public class AllStoresSelectListItemsQueryHandler : IRequestHandler<AllStoresSelectListItemsQuery, List<SelectListItem>>
+    public class AllStoresSelectListItemsQueryHandler : IRequestHandler<AllStoresSelectListItemsQuery, Result<List<SelectListItem>>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -23,7 +24,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<List<SelectListItem>> Handle(AllStoresSelectListItemsQuery request, CancellationToken cancellationToken)
+        public Task<Result<List<SelectListItem>>> Handle(AllStoresSelectListItemsQuery request, CancellationToken cancellationToken)
         {
             var allStores = unitOfWork.StoreRepository.GetAll(
                 include: store => store
@@ -35,7 +36,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 Text = s.Address.City
             }).ToList();
 
-            return Task.FromResult(allStores);
+            return Task.FromResult(Result.Success(allStores));
         }
     }
 }

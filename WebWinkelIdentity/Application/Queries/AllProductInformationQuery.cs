@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using CSharpFunctionalExtensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public record AllProductInformationQuery(int Id) : IRequest<AllProductInformation>
+    public record AllProductInformationQuery(int Id) : IRequest<Result<AllProductInformation>>
     {
 
     }
 
-    public class AllProductInformationQueryHandler : IRequestHandler<AllProductInformationQuery, AllProductInformation>
+    public class AllProductInformationQueryHandler : IRequestHandler<AllProductInformationQuery, Result<AllProductInformation>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -25,7 +26,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<AllProductInformation> Handle(AllProductInformationQuery request, CancellationToken cancellationToken)
+        public Task<Result<AllProductInformation>> Handle(AllProductInformationQuery request, CancellationToken cancellationToken)
         {
             var product = unitOfWork.ProductRepository.GetById(request.Id);
             var productVariations = unitOfWork.ProductRepository.GetProductVariations(product);
@@ -39,7 +40,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 Stores = unitOfWork.StoreRepository.GetAll(include: store => store.Include(s => s.Address))
             };
 
-            return Task.FromResult(AllInfo);
+            return Task.FromResult(Result.Success(AllInfo));
         }
     }
 

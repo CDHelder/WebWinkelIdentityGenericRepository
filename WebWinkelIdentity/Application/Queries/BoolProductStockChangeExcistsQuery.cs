@@ -25,13 +25,13 @@ namespace WebWinkelIdentity.Web.Application.Queries
         public Task<Result> Handle(BoolProductStockChangeExcistsQuery request, CancellationToken cancellationToken)
         {
             var intList = request.List.Select(x => int.Parse(x)).ToList();
-            var productIds = string.Join(", ", intList.Select(i => i.ToString()).ToArray());
             foreach (var id in unitOfWork.StoreProductRepository.GetAllStoreProducts(intList, request.SelectedStoreId))
             {
                 var enteredStockChange = intList.Where(adat => adat == id.ProductId).Count();
                 var currentStock = id.Quantity;
                 if (currentStock < enteredStockChange)
                 {
+                    var productIds = string.Join(", ", intList.Select(i => i.ToString()).ToArray());
                     var errorMessage = $"Error: Cant delete products with ids: {productIds} " +
                         $"because current stock is smaller then entered change";
 

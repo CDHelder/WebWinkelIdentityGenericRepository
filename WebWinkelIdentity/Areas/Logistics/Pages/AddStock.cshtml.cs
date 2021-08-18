@@ -38,7 +38,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public IActionResult OnGet()
         {
             AllText = null;
-            AllStores = mediator.Send(new AllStoresSelectListItemsQuery()).Result;
+            AllStores = mediator.Send(new AllStoresSelectListItemsQuery()).Result.Value;
 
             return Page();
         }
@@ -63,9 +63,9 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             //Geen errors en hij runt gwn, wel nog even debuggen
             var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
 
-            if (result.Result.AllProductsAndStoreExcist == false)
+            if (result.Result.IsFailure)
             {
-                FormResult = result.Result.ErrorMessage;
+                FormResult = result.Result.Error;
             }
 
             AllTextData = string.Join("\n", list);

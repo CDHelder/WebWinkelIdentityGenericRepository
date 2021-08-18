@@ -83,11 +83,11 @@
                 @Html.DisplayFor(modelItem => item.StoreProduct.Product.Brand.Name)
             </td>
             <td>
-                <a asp-area="ProductsManagement" asp-page="./Details" asp-route-id="@item.StoreProduct.ProductId">Details</a>
+                <a asp-area="ProductsManagement" asp-page="./Details" asp-route-id="@item.StoreProduct.ProductId">Product Details</a>
                 @if (User.IsInRole("Admin"))
                 {
                 <a>|</a>
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-area="ProductsManagement" asp-page="./Delete" asp-route-id="@item.Id">Delete Product</a>
                 }
             </td>
         </tr>
