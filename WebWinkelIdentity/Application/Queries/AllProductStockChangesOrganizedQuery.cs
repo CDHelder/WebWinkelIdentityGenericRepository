@@ -24,6 +24,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
         }
 
         //Create List of ProductStockChange where each PSC has identical DateTime value all combined in a List
+        //Pak alle, Sort hem via DateTime Property, foreach, als datetime hetzelfde is voeg toe aan List, zo niet voeg hele List toe aan de main List??
         public Task<Result<List<List<ProductStockChange>>>> Handle(AllProductStockChangesOrganizedQuery request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
