@@ -42,9 +42,9 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
             //TODO: Maak Create Command (mediator)
             var result = mediator.Send(new CreateProductCommand(Product));
 
-            if (result.Result.IsSuccess)
+            if (result.Result.Value > 0)
             {
-                return LocalRedirect($"/ProductsManagement/Details?id={Product.Id}");
+                return LocalRedirect($"/ProductsManagement/Details?id={result.Result.Value}");
             }
 
             return Page();

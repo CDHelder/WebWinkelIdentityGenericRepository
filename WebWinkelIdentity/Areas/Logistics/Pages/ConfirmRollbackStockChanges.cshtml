@@ -21,6 +21,9 @@
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
             </th>
             <th>
@@ -45,6 +48,9 @@
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)
@@ -79,6 +85,9 @@
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
             </th>
             <th>
@@ -103,6 +112,9 @@
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)
@@ -137,6 +149,9 @@
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
             </th>
             <th>
@@ -163,6 +178,9 @@
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
             </td>
             <td>
+                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </td>
+            <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)
             </td>
             <td>
@@ -183,13 +201,16 @@
 
 @if (Model.RollBackIsPossible == true)
 {
+<form method="post">
+    @Html.HiddenFor(model => model.ProductStockChange.StoreProduct.ProductId)
+    @Html.HiddenFor(model => model.ProductStockChange.Id)
     <div class="form-group">
         <br />
         <input type="submit" value="Confirm Rollback" class="btn btn-primary" />
     </div>
+</form>
 }
 else
 {
-    @*<p>@Model.ProductStockChange.StoreProduct.Quantity + @Model.ProductStockChange.StockChange = @Model.RollBackStockValue</p>*@
     <p>A negative Stock Quantity is not possible, the selected Product Stock Change cannot be Rollbacked</p>
 }

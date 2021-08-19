@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
+using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
@@ -23,6 +24,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public ProductStockChange ProductStockChange { get; set; }
         public bool RollBackIsPossible { get; set; }
         public int RollBackStockValue { get; set; }
+        public int ProductId { get; set; }
 
         public void OnGet(int id)
         {
@@ -35,11 +37,17 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
                 RollBackIsPossible = true;
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
-            //TODO: Extra functie die controleert dat rollback kan
-            //TODO: Mediator CQRS Command voor RollBack
-            //TODO: if Result.IsSuccesfull -> RedirectToPage("/SuccesfullyRollbackedStockChanges");
+            ProductId = ProductStockChange.StoreProduct.ProductId;
+            var result = mediator.Send(new ProductStockChangeRollBackCommand(ProductStockChange.Id));
+
+            if (result.Result.IsSuccess)
+            {
+                return LocalRedirect($"/ProductsManagement/Details?id={ProductId}");
+            }
+
+            return Page();
         }
     }
 }

@@ -10,12 +10,12 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    public record CreateProductCommand(Product Product) : IRequest<Result>
+    public record CreateProductCommand(Product Product) : IRequest<Result<int>>
     {
 
     }
 
-    public class ProductCreateCommandHandler : IRequestHandler<CreateProductCommand, Result>
+    public class ProductCreateCommandHandler : IRequestHandler<CreateProductCommand, Result<int>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -24,7 +24,7 @@ namespace WebWinkelIdentity.Web.Application.Commands
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public Task<Result<int>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var productsSizes = request.Product.Size.Trim().Split(",");
             if (productsSizes.Count() > 1)
@@ -53,10 +53,14 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
             var result = unitOfWork.SaveChanges();
             if (result == true)
-                return Task.FromResult(Result.Success());
+            {
+                //Pak het id van de eerste product dat is aangemaakt uit database
+                var firstProductId = unitOfWork.ProductRepository.GetProductVariations(request.Product).First().Id;
+                return Task.FromResult(Result.Success(firstProductId));
+            }
 
             var errorMessage = $"Product {request.Product.Name} with id: {request.Product.Id} couldn't be created and saved in the database";
-            return Task.FromResult(Result.Failure(errorMessage));
+            return Task.FromResult(Result.Failure<int>(errorMessage));
         }
     }
 }
