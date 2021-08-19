@@ -96,7 +96,7 @@
         @foreach (var item in Model.BeforeChangeStockValues)
         {
             @Html.HiddenFor(s => s.BeforeChangeStockValues[item.Key])
-            @Html.HiddenFor(s => s.BeforeChangeStockValues[item.Value])
+            @*@Html.HiddenFor(s => s.BeforeChangeStockValues[item.Value])*@
         }
         </tbody>
     </table>

@@ -32,8 +32,8 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 var productVariations = new List<Product>();
                 foreach (var size in productsSizes)
                 {
-                    productVariations.Add(new Product 
-                    { 
+                    var newProduct = new Product
+                    {
                         BrandId = request.Product.BrandId,
                         CategoryId = request.Product.CategoryId,
                         Color = request.Product.Color,
@@ -42,7 +42,8 @@ namespace WebWinkelIdentity.Web.Application.Commands
                         Name = request.Product.Name,
                         Price = request.Product.Price,
                         Size = size
-                    });
+                    };
+                    productVariations.Add(newProduct);
                 }
                 unitOfWork.ProductRepository.Create(productVariations);
             }
@@ -51,12 +52,36 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 unitOfWork.ProductRepository.Create(request.Product);
             }
 
+            //TODO: Zet bij elke StoreProduct Quantity op 0
+
             var result = unitOfWork.SaveChanges();
             if (result == true)
             {
-                //Pak het id van de eerste product dat is aangemaakt uit database
-                var firstProductId = unitOfWork.ProductRepository.GetProductVariations(request.Product).First().Id;
-                return Task.FromResult(Result.Success(firstProductId));
+                var allProductVariations = unitOfWork.ProductRepository.GetProductVariations(request.Product);
+                var allStores = unitOfWork.StoreRepository.GetAll();
+
+                var storeProductVariations = new List<StoreProduct>();
+                foreach (var variation in allProductVariations)
+                {
+                    foreach (var store in allStores)
+                    {
+                        var newStoreProduct = new StoreProduct
+                        {
+                            InTransport = false,
+                            ProductId = variation.Id,
+                            Quantity = 0,
+                            StoreId = store.Id
+                        };
+                        storeProductVariations.Add(newStoreProduct);
+                    }
+                }
+                unitOfWork.StoreProductRepository.Create(storeProductVariations);
+                var SPResult = unitOfWork.SaveChanges();
+                if (SPResult == true)
+                {
+                    var firstProductId = allProductVariations.First().Id;
+                    return Task.FromResult(Result.Success(firstProductId));
+                }
             }
 
             var errorMessage = $"Product {request.Product.Name} with id: {request.Product.Id} couldn't be created and saved in the database";
