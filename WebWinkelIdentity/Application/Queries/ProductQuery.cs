@@ -11,7 +11,6 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    //TODO: Implement Alle Queries
     public record ProductQuery(int Id) : IRequest<Result<Product>>
     {
 

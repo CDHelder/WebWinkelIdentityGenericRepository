@@ -52,8 +52,6 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 unitOfWork.ProductRepository.Create(request.Product);
             }
 
-            //TODO: Zet bij elke StoreProduct Quantity op 0
-
             var result = unitOfWork.SaveChanges();
             if (result == true)
             {

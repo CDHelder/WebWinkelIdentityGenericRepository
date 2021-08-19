@@ -39,7 +39,6 @@ namespace WebWinkelIdentity.Areas.ProductsManagement.Pages
                 return Page();
             }
 
-            //TODO: Maak Create Command (mediator)
             var result = mediator.Send(new CreateProductCommand(Product));
 
             if (result.Result.Value > 0)

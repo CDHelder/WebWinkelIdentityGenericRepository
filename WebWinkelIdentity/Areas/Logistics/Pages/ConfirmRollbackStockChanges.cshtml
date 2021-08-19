@@ -8,6 +8,7 @@
 <h1>Changes made by user: @Model.ProductStockChange.AssociatedUser.UserName</h1>
 <br />
 <h3>Product Stock Change made at @Model.ProductStockChange.DateChanged</h3>
+<br />
 <table class="table">
     <thead>
         <tr>
@@ -15,13 +16,19 @@
                 Stock Change
             </th>
             <th>
+                Current Stock
+            </th>
+            <th>
+                New Stock
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Id)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
@@ -44,141 +51,19 @@
                 @Html.DisplayFor(model => model.ProductStockChange.StockChange)
             </td>
             <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.ProductId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Brand.Name)
-            </td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<br />
-
-<h3>Current Product Stock</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Current Stock
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Price)
-            </th>
-            <th>
-                Category
-            </th>
-            <th>
-                Brand
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Quantity)
             </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.ProductId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Brand.Name)
-            </td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<br />
-
-<h3>New Value after RollBack</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                New Stock
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductStockChange.StoreProduct.Product.Price)
-            </th>
-            <th>
-                Category
-            </th>
-            <th>
-                Brand
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
             <td>
                 @Html.DisplayFor(model => model.RollBackStockValue)
             </td>
             <td>
+                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
+            </td>
+            <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.ProductId)
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Store.Address.City)
             </td>
             <td>
                 @Html.DisplayFor(model => model.ProductStockChange.StoreProduct.Product.Size)

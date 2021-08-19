@@ -9,7 +9,6 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    //TODO: Implement Alle Commands
     public record DeleteProductVariationsCommand(int Id) : IRequest<Result>
     {
 

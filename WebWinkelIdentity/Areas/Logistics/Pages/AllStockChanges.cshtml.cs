@@ -22,9 +22,9 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             this.mediator = mediator;
         }
 
-        //TODO: Maak rollback functie om gemaakte veranderingen terug te veranderen
         public List<ProductStockChange> ProductStockChange { get;set; }
 
+        //TODO: Maak Functie om meerdere Rollbacks te maken (Tip: Pak de relevante rollbacks via de datum en tijd)
         public void OnGetAsync()
         {
             ProductStockChange = mediator.Send(new AllProductStockChangesStockQuery()).Result.Value;
