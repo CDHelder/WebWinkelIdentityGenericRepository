@@ -72,22 +72,23 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
         private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int changeQuantity, string userId, bool addStock)
         {
-            if (addStock == false)
-                changeQuantity = -changeQuantity;
+            ////TODO: Verander
+            //if (addStock == false)
+            //    changeQuantity = -changeQuantity;
 
-            ProductStockChange PSC = new ProductStockChange
-            {
-                UserId = userId,
-                DateChanged = DateTime.Now,
-                StoreProductId = storeProduct.Id,
-                StockChange = changeQuantity
-            };
+            //ProductStockChange PSC = new ProductStockChange
+            //{
+            //    UserId = userId,
+            //    DateChanged = DateTime.Now,
+            //    StoreProductId = storeProduct.Id,
+            //    StockChange = changeQuantity
+            //};
 
-            unitOfWork.ProductStockChangeRepository.Create(PSC);
-            if (unitOfWork.SaveChanges() == false)
-            {
-                return false;
-            }
+            //unitOfWork.ProductStockChangeRepository.Create(PSC);
+            //if (unitOfWork.SaveChanges() == false)
+            //{
+            //    return false;
+            //}
 
             return true;
         }

@@ -4,3 +4,85 @@
     ViewData["Title"] = "Confirm stock changes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@foreach (var listPSC in Model.ProductStockChanges)
+{
+    //TODO: Verander
+    //<h4>@listPSC[0].AssociatedUser.UserName made this bulk change at @listPSC[0].DateChanged  <a asp-page="./Details" asp-route-id="@listPSC.">Details</a> </h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Stock Change
+            </th>
+            <th>
+                Current Stock
+            </th>
+            <th>
+                New Stock
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => listPSC[0].StoreProduct.Store.Address.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => listPSC[0].StoreProduct.Product.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => listPSC[0].StoreProduct.Product.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => listPSC[0].StoreProduct.Product.Size)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => listPSC[0].StoreProduct.Product.Price)
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Brand
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var PSC in listPSC)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => PSC.StockChange)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Quantity)
+            </td>
+            <td>
+                @(PSC.StoreProduct.Quantity + PSC.StockChange)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Size)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Brand.Name)
+            </td>
+            <td></td>
+        </tr>
+        }
+    </tbody>
+</table>
+<br />
+}

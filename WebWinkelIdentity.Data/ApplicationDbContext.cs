@@ -250,7 +250,12 @@ namespace WebWinkelIdentity.Data
             {
                 psc.ToTable("ProductStockChanges");
                 psc.HasOne(u => u.StoreProduct).WithMany().HasForeignKey(psc => psc.StoreProductId);
-                psc.HasOne(u => u.AssociatedUser).WithMany().HasForeignKey(psc => psc.UserId);
+            });
+
+            builder.Entity<LoadStockChange>(psc =>
+            {
+                psc.ToTable("LoadStockChanges");
+                psc.HasMany(lsc => lsc.ProductStockChanges).WithOne().HasForeignKey(psc => psc.LoadStockChangeId);
             });
 
             builder.Entity<WeekOpeningTimes>(wot =>

@@ -4,11 +4,11 @@
     ViewData["Title"] = "Confirm stock changes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@*//TODO: Verander
 <h1>Changes made by user: @Model.ProductStockChange.AssociatedUser.UserName</h1>
 <br />
 <h3>Product Stock Change made at @Model.ProductStockChange.DateChanged</h3>
-<br />
+<br />*@
 <table class="table">
     <thead>
         <tr>
@@ -86,14 +86,14 @@
 
 @if (Model.RollBackIsPossible == true)
 {
-<form method="post">
-    @Html.HiddenFor(model => model.ProductStockChange.StoreProduct.ProductId)
-    @Html.HiddenFor(model => model.ProductStockChange.Id)
-    <div class="form-group">
-        <br />
-        <input type="submit" value="Confirm Rollback" class="btn btn-primary" />
-    </div>
-</form>
+    <form method="post">
+        @Html.HiddenFor(model => model.ProductStockChange.StoreProduct.ProductId)
+        @Html.HiddenFor(model => model.ProductStockChange.Id)
+        <div class="form-group">
+            <br />
+            <input type="submit" value="Confirm Rollback" class="btn btn-primary" />
+        </div>
+    </form>
 }
 else
 {

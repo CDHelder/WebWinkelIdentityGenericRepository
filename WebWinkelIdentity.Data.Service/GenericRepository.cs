@@ -39,17 +39,15 @@ namespace WebWinkelIdentity.Data.Service
             dbSet.Remove(entity);
         }
 
+        //TODO: haal orderby weg
         public virtual T Get(
-            Expression<Func<T, bool>> filter = null, 
+            Expression<Func<T, bool>> filter,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
+            query = query.Where(filter);
 
             if (include != null)
             {
@@ -68,8 +66,8 @@ namespace WebWinkelIdentity.Data.Service
         }
 
         public virtual List<T> GetAll(
-            Expression<Func<T, bool>> filter = null, 
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;

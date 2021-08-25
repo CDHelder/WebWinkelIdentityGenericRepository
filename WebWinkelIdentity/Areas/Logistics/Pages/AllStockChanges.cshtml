@@ -13,7 +13,7 @@
     <a style="font-size:25px">&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;</a>
     <a asp-page="RemoveStock" style="font-size:25px">Remove</a>
     <a style="font-size:25px">&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;</a>
-    <a asp-page="RemoveStock" style="font-size:25px">Mutliple Rollbacks</a>
+    <a asp-page="MultipleRollbacksIndex" style="font-size:25px">Mutliple Rollbacks</a>
 </p>
 <table class="table">
     <thead>
@@ -24,12 +24,12 @@
             <th>
                 Change
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.ProductStockChange[0].DateChanged)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange[0].AssociatedUser)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.ProductStockChange[0].StoreProduct.Product.Id)
             </th>
@@ -60,12 +60,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.StockChange)
             </td>
-            <td>
+            @*//TODO: Verander*@
+            @*<td>
                 @Html.DisplayFor(modelItem => item.DateChanged)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AssociatedUser.UserName)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.StoreProduct.Product.Id)
             </td>

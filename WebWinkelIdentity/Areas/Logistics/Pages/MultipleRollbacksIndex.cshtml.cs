@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
@@ -21,7 +22,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         public List<List<ProductStockChange>> ProductStockChanges { get; set; }
         public void OnGet()
         {
-            ProductStockChanges = mediator.Send(new AllProductStockChangesOrganizedQuery)
+            ProductStockChanges = mediator.Send(new AllProductStockChangesOrganizedQuery()).Result.Value;
         }
     }
 }

@@ -30,15 +30,16 @@ namespace WebWinkelIdentity.Web.Application.Commands
             {
                 if (storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id] != 0)
                 {
-                    var PSC = new ProductStockChange
-                    {
-                        UserId = request.UserId,
-                        DateChanged = DateTime.Now,
-                        StockChange = storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id],
-                        StoreProductId = storeProduct.Id
-                    };
-
-                    unitOfWork.ProductStockChangeRepository.Create(PSC);
+                    ////TODO: Verander
+                    //var PSC = new ProductStockChange
+                    //{
+                    //    UserId = request.UserId,
+                    //    DateChanged = DateTime.Now,
+                    //    StockChange = storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id],
+                    //    StoreProductId = storeProduct.Id
+                    //};
+                    //
+                    //unitOfWork.ProductStockChangeRepository.Create(PSC);
                 }
             }
 

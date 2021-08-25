@@ -31,6 +31,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
             var product = unitOfWork.ProductRepository.Get(
                 filter: p => p.Id == request.Id,
                 include: pr => pr.Include(p => p.Brand).Include(p => p.Category));
+
             var productVariations = unitOfWork.ProductRepository.GetProductVariations(product);
             var productStocks = unitOfWork.StoreProductRepository.GetAllStoreProducts(productVariations);
 
