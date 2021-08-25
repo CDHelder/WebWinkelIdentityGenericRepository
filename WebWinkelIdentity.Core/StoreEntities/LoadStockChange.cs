@@ -15,5 +15,7 @@ namespace WebWinkelIdentity.Core.StoreEntities
         public DateTime DateChanged { get; set; }
         public List<ProductStockChange> ProductStockChanges { get; set; }
 
+        //TODO: Voeg property string explanation toe voor extra uitleg als bijv. admin uit meerdere steden producten uitboekt
+
     }
 }
