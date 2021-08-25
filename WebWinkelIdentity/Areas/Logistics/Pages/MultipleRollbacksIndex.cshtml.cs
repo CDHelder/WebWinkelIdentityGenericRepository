@@ -19,10 +19,10 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             this.mediator = mediator;
         }
 
-        public List<List<ProductStockChange>> ProductStockChanges { get; set; }
+        public List<LoadStockChange> LoadStockChanges { get; set; }
         public void OnGet()
         {
-            ProductStockChanges = mediator.Send(new AllProductStockChangesOrganizedQuery()).Result.Value;
+            LoadStockChanges = mediator.Send(new AllProductStockChangesOrganizedQuery()).Result.Value;
         }
     }
 }

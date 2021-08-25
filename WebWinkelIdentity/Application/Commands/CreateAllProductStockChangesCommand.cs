@@ -26,22 +26,27 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
         public Task<Result> Handle(CreateAllProductStockChangesCommand request, CancellationToken cancellationToken)
         {
+            LoadStockChange LSC = new LoadStockChange();
+            LSC.UserId = request.UserId;
+            LSC.DateChanged = DateTime.Now;
+            LSC.ProductStockChanges = new();
+
             foreach (var storeProduct in request.StoreProducts)
             {
                 if (storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id] != 0)
                 {
-                    ////TODO: Verander
-                    //var PSC = new ProductStockChange
-                    //{
-                    //    UserId = request.UserId,
-                    //    DateChanged = DateTime.Now,
-                    //    StockChange = storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id],
-                    //    StoreProductId = storeProduct.Id
-                    //};
-                    //
+                    //TODO: Verander
+                    var PSC = new ProductStockChange
+                    {
+                        StockChange = storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id],
+                        StoreProductId = storeProduct.Id
+                    };
+
                     //unitOfWork.ProductStockChangeRepository.Create(PSC);
+                    LSC.ProductStockChanges.Add(PSC);
                 }
             }
+            unitOfWork.LoadStockChangeRepository.Create(LSC);
 
             var result = unitOfWork.SaveChanges();
             if (result == true)

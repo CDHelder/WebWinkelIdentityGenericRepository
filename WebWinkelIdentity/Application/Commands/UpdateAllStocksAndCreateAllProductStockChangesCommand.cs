@@ -18,16 +18,23 @@ namespace WebWinkelIdentity.Web.Application.Commands
     public class UpdateAllStocksAndCreateAllProductStockChangesCommandHandler : IRequestHandler<UpdateAllStocksAndCreateAllProductStockChangesCommand, Result>
     {
         private readonly IUnitOfWork unitOfWork;
+        private LoadStockChange LSC;
 
         public UpdateAllStocksAndCreateAllProductStockChangesCommandHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
+            this.LSC = new LoadStockChange();
+            this.LSC.ProductStockChanges = new();
         }
 
         public Task<Result> Handle(UpdateAllStocksAndCreateAllProductStockChangesCommand request, CancellationToken cancellationToken)
         {
             List<int> notSaveableProductIds = new();
             List<int> notLoggableProductIds = new();
+
+            LSC.UserId = request.UserId;
+            LSC.DateChanged = DateTime.Now;
+
             foreach (var storeProduct in request.StoreProducts)
             {
                 var changeQuantity = request.AllProductIds.Where(x => x == storeProduct.ProductId).Count();
@@ -38,7 +45,6 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 else if (request.AddStock == false)
                 {
                     storeProduct.Quantity -= changeQuantity;
-
                 }
 
                 unitOfWork.StoreProductRepository.Update(storeProduct);
@@ -67,30 +73,32 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 return Task.FromResult(Result.Failure(productErrorMessage));
             }
 
+            unitOfWork.LoadStockChangeRepository.Create(LSC);
+            if (unitOfWork.SaveChanges() == false)
+            {
+                return Task.FromResult(Result.Failure($"No changes were saved in the Database"));
+            }
+
             return Task.FromResult(Result.Success());
         }
 
         private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int changeQuantity, string userId, bool addStock)
         {
-            ////TODO: Verander
-            //if (addStock == false)
-            //    changeQuantity = -changeQuantity;
+            if (addStock == false)
+                changeQuantity = -changeQuantity;
 
-            //ProductStockChange PSC = new ProductStockChange
-            //{
-            //    UserId = userId,
-            //    DateChanged = DateTime.Now,
-            //    StoreProductId = storeProduct.Id,
-            //    StockChange = changeQuantity
-            //};
+            ProductStockChange PSC = new ProductStockChange
+            {
+                StoreProductId = storeProduct.Id,
+                StockChange = changeQuantity
+            };
 
-            //unitOfWork.ProductStockChangeRepository.Create(PSC);
-            //if (unitOfWork.SaveChanges() == false)
-            //{
-            //    return false;
-            //}
+            LSC.ProductStockChanges.Add(PSC);
 
-            return true;
+            if (LSC.ProductStockChanges.Contains(PSC) == true)
+                return true;
+
+            return false;
         }
     }
 }

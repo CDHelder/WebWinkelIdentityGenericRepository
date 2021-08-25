@@ -21,6 +21,7 @@ namespace WebWinkelIdentity.Data.Service.Interfaces
         public UOWCustomerRepository CustomerRepository { get; }
         public UOWEmployeeRepository EmployeeRepository { get; }
         public UOWAddressRepository AddressRepository { get; }
+        public UOWLoadStockChangeRepository LoadStockChangeRepository { get; }
         bool SaveChanges();
     }
 }
