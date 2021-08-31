@@ -1,0 +1,100 @@
+﻿@page
+@model WebWinkelIdentity.Web.Areas.Logistics.Pages.ConfirmRollbackLoadStockChangesModel
+@{
+    ViewData["Title"] = "Confirm stock changes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Are you sure you want to make the following changes?</h3>
+<br />
+<h4> @Model.LoadStockChange.AssociatedUser.UserName made this bulk change at @Model.LoadStockChange.DateChanged</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Stock Change
+            </th>
+            <th>
+                Current Stock
+            </th>
+            <th>
+                New Stock
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Size)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Price)
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Brand
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var PSC in Model.LoadStockChange.ProductStockChanges)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => PSC.StockChange)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Quantity)
+                </td>
+                <td>
+                    @(PSC.StoreProduct.Quantity + PSC.StockChange)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Size)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Brand.Name)
+                </td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+
+@if (Model.RollbackPossible == true)
+{
+    <form method="post">
+        <input type="hidden" asp-for="LoadStockChange.Id" />
+        <input type="submit" value="Confirm All Stock Changes" class="btn btn-danger" />
+    </form>
+}
+else
+{
+    <p>One ProductChange results in negative stock value</p>
+    <p>The rollback is not possible</p>
+}
+

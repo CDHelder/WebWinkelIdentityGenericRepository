@@ -11,23 +11,24 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public class AllLoadStockChangesStockQuery : IRequest<Result<List<LoadStockChange>>>
+    public record LoadStockChangeQuery(int Id) : IRequest<Result<LoadStockChange>>
     {
     }
 
-    public class AllLoadStockChangesStockQueryHandler : IRequestHandler<AllLoadStockChangesStockQuery, Result<List<LoadStockChange>>>
+    public class LoadStockChangeQueryHandler : IRequestHandler<LoadStockChangeQuery, Result<LoadStockChange>>
     {
         private readonly IUnitOfWork unitOfWork;
 
-        public AllLoadStockChangesStockQueryHandler(IUnitOfWork unitOfWork)
+        public LoadStockChangeQueryHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
 
-        public Task<Result<List<LoadStockChange>>> Handle(AllLoadStockChangesStockQuery request, CancellationToken cancellationToken)
+        public Task<Result<LoadStockChange>> Handle(LoadStockChangeQuery request, CancellationToken cancellationToken)
         {
-            var all = unitOfWork.LoadStockChangeRepository.GetAll
+            var obj = unitOfWork.LoadStockChangeRepository.Get
                 (
+                filter: lsc => lsc.Id == request.Id,
                 include: lsc => lsc
                 .Include(a => a.ProductStockChanges)
                 .ThenInclude(psc => psc.StoreProduct)
@@ -46,7 +47,13 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 .ThenInclude(p => p.Category)
                 .Include(a => a.AssociatedUser)
                 );
-            return Task.FromResult(Result.Success(all));
+
+            if (obj == null)
+                return Task.FromResult(Result.Failure<LoadStockChange>($"Couldn't find product with id: {request.Id}"));
+            if (obj.ProductStockChanges == null)
+                return Task.FromResult(Result.Failure<LoadStockChange>($"Couldn't find associated product changes with loadstockid: {request.Id}"));
+
+            return Task.FromResult(Result.Success(obj));
         }
     }
 }

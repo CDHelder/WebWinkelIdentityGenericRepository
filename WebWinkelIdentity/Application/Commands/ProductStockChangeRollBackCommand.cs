@@ -51,6 +51,12 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 return Task.FromResult(Result.Failure(errorMessage));
             }
 
+            var LSC = unitOfWork.LoadStockChangeRepository.Get(filter: lsc => lsc.ProductStockChanges.Any(x => x.Id == request.Id));
+            if (LSC.ProductStockChanges.Count() == 1)
+            {
+                unitOfWork.LoadStockChangeRepository.Delete(LSC);
+            }
+
             unitOfWork.ProductStockChangeRepository.Delete(PSC);
             if (unitOfWork.SaveChanges() == false)
             {

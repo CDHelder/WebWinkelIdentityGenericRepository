@@ -24,12 +24,12 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             this.mediator = mediator;
         }
 
-        public List<ProductStockChange> ProductStockChange { get;set; }
+        public List<LoadStockChange> LoadStockChanges { get;set; }
 
         //TODO: Maak Functie om meerdere Rollbacks te maken (Tip: Pak de relevante rollbacks via de datum en tijd)
         public void OnGetAsync()
         {
-            ProductStockChange = mediator.Send(new AllProductStockChangesStockQuery()).Result.Value;
+            LoadStockChanges = mediator.Send(new AllLoadStockChangesStockQuery()).Result.Value;
         }
     }
 }
