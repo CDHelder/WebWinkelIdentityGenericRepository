@@ -7,36 +7,34 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
-namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
+namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
-    public class ConfirmAddStockModel : PageModel
+    public class ConfirmCreateModel : PageModel
     {
         private readonly IMediator mediator;
 
-        public ConfirmAddStockModel(IMediator mediator)
+        public ConfirmCreateModel(IMediator mediator)
         {
             this.mediator = mediator;
         }
+
+
+        [TempData]
+        public string AllTextData { get; set; }
+        [TempData]
+        public int SelectedStartLocationStoreId { get; set; }
+        [TempData]
+        public int SelectedDeliveryLocationStoreId { get; set; }
 
         [BindProperty]
         public List<StoreProduct> StoreProducts { get; set; }
         [BindProperty]
         public List<int> AllTextDataList { get; set; }
         [BindProperty]
-        public int PostStoreId { get; set; }
-
-        [TempData]
-        public int StoreId { get; set; }
-        [TempData]
-        public int SuccesStoreId { get; set; }
-        [TempData]
         public string FormResult { get; set; }
-        [TempData]
-        public string AllTextData { get; set; }
 
         public IActionResult OnGet()
         {
@@ -44,26 +42,22 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             Array.Sort(AllTextDataArray);
             AllTextDataList = AllTextDataArray.Select(x => int.Parse(x)).ToList();
 
-            StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, StoreId)).Result.Value;
-            PostStoreId = StoreId;
+            StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, SelectedStartLocationStoreId)).Result.Value;
 
             return Page();
         }
 
-        //TODO: Maybe LoadStockChangeId terug geven en redirecten naar details page ervan??
         public IActionResult OnPost()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
-            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, true, false));
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, true, SelectedDeliveryLocationStoreId));
 
             if (result.Result.IsFailure)
             {
                 FormResult = result.Result.Error;
             }
 
-            AllTextData = string.Join("\n", AllTextDataList);
-            SuccesStoreId = PostStoreId;
-            return RedirectToPage("/SuccesfullyAddedStock");
+            return LocalRedirect("/Shipments/Details?={}");
         }
     }
 }

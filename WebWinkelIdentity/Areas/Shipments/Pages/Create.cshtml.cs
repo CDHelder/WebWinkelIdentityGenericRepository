@@ -2,45 +2,80 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
     public class CreateModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public CreateModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public CreateModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["StoreId"] = new SelectList(_context.Stores, "Id", "Id");
-        ViewData["LoadStockChangeId"] = new SelectList(_context.LoadStockChanges, "Id", "Id");
+            AllStores = mediator.Send(new AllStoresSelectListItemsQuery()).Result.Value;
+
             return Page();
         }
 
-        [BindProperty]
-        public Shipment Shipment { get; set; }
+        [TempData]
+        public string FormResult { get; set; }
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        [BindProperty]
+        public string AllText { get; set; }
+        [BindProperty]
+        public List<SelectListItem> AllStores { get; set; }
+        [BindProperty]
+        public int StartLocationStoreId { get; set; }
+        [BindProperty]
+        public int DeliveryLocationStoreId { get; set; }
+
+        [TempData]
+        public string AllTextData { get; set; }
+        [TempData]
+        public int SelectedStartLocationStoreId { get; set; }
+        [TempData]
+        public int SelectedDeliveryLocationStoreId { get; set; }
+
+        //TODO: Check of werkt
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+            else if(StartLocationStoreId == DeliveryLocationStoreId)
+            {
+                FormResult = "Please make sure the start location and delivery location are not the same";
+                return Page();
+            }
 
-            _context.Shipments.Add(Shipment);
-            await _context.SaveChangesAsync();
+            AllText = AllText.Replace("\r", "");
+            var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            return RedirectToPage("./Index");
+            var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, StartLocationStoreId.ToString()));
+
+            if (result.Result.IsFailure)
+            {
+                FormResult = result.Result.Error;
+                return Page();
+            }
+
+            AllTextData = string.Join("\n", list);
+            SelectedStartLocationStoreId = StartLocationStoreId;
+            SelectedDeliveryLocationStoreId = DeliveryLocationStoreId;
+
+            return RedirectToPage("./ConfirmCreate");
         }
     }
 }

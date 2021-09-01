@@ -54,7 +54,7 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         {
             //TODO: Check if mediator works correctly
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
-            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false));
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, false));
 
             if (result.Result.IsFailure)
             {

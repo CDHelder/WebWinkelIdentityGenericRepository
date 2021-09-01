@@ -11,7 +11,7 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    public record UpdateAllStocksAndCreateAllProductStockChangesCommand(List<StoreProduct> StoreProducts, List<int> AllProductIds, string UserId, bool AddStock) : IRequest<Result>
+    public record UpdateAllStocksAndCreateAllProductStockChangesCommand(List<StoreProduct> StoreProducts, List<int> AllProductIds, string UserId, bool AddStock, bool IsShipment, int DeliveryLocationStoreId = 0) : IRequest<Result>
     {
     }
 
@@ -74,11 +74,19 @@ namespace WebWinkelIdentity.Web.Application.Commands
             }
 
             unitOfWork.LoadStockChangeRepository.Create(LSC);
+
+            if (request.IsShipment == true && request.DeliveryLocationStoreId != 0)
+            {
+                var shipment = new Shipment { Delivered = false, DeliveredTime = null, LoadStockChange = LSC, StoreId = request.DeliveryLocationStoreId };
+                unitOfWork.ShipmentRepository.Create(shipment);
+            }
+
             if (unitOfWork.SaveChanges() == false)
             {
                 return Task.FromResult(Result.Failure($"No changes were saved in the Database"));
             }
 
+            //TODO: Geef de int value van de Id van LCS terug (hierdoor wordt redirecting makkelijker voor AddStock, RemoveStock en ConfirmCreateShipment)
             return Task.FromResult(Result.Success());
         }
 

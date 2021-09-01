@@ -3,36 +3,57 @@
 
 @{
     ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
 
 <h4>Shipment</h4>
 <hr />
+<h3 style="color:red">@Model.FormResult</h3>
+<br />
+
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <table>
+                <tr>
+                    <td>
+                        From
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>
+                        To
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <select asp-for="StartLocationStoreId" class="form-control" asp-items="Model.AllStores"
+                                    style="width:200px"></select>
+                        </div>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>
+                        <div class="form-group" style="display:inline-block">
+                            <select asp-for="DeliveryLocationStoreId" class="form-control" asp-items="Model.AllStores"
+                                    style="width:200px"></select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <br />
+
+            <textarea asp-for="AllText" class="form-group"
+                      style="min-width:300px; min-height:550px; font-size:30pt"
+                      placeholder="Make sure the id of the item on its label is in the textbox
+
+and that every id has its own line">
+            </textarea>
+
             <div class="form-group">
-                <label asp-for="Shipment.DeliveredTime" class="control-label"></label>
-                <input asp-for="Shipment.DeliveredTime" class="form-control" />
-                <span asp-validation-for="Shipment.DeliveredTime" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Shipment.Delivered" /> @Html.DisplayNameFor(model => model.Shipment.Delivered)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Shipment.StoreId" class="control-label"></label>
-                <select asp-for="Shipment.StoreId" class ="form-control" asp-items="ViewBag.StoreId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Shipment.LoadStockChangeId" class="control-label"></label>
-                <select asp-for="Shipment.LoadStockChangeId" class ="form-control" asp-items="ViewBag.LoadStockChangeId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create Shipment" class="btn btn-primary" />
             </div>
         </form>
     </div>

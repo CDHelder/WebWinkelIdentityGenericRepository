@@ -18,6 +18,7 @@ namespace WebWinkelIdentity.Data.Service
         private UOWEmployeeRepository employeeRepository;
         private UOWAddressRepository addressRepository;
         private UOWLoadStockChangeRepository loadStockChangeRepository;
+        private UOWShipmentRepository shipmentRepository;
 
         public UnitOfWork(ApplicationDbContext dbContext)
         {
@@ -33,6 +34,7 @@ namespace WebWinkelIdentity.Data.Service
             EmployeeRepository = employeeRepository;
             AddressRepository = addressRepository;
             LoadStockChangeRepository = loadStockChangeRepository;
+            ShipmentRepository = shipmentRepository;
         }
 
         //TODO: Refactor
@@ -191,6 +193,12 @@ namespace WebWinkelIdentity.Data.Service
             get => loadStockChangeRepository ?? new UOWLoadStockChangeRepository(_dbContext);
 
             private set => loadStockChangeRepository = value;
+        }
+        public UOWShipmentRepository ShipmentRepository
+        {
+            get => shipmentRepository ?? new UOWShipmentRepository(_dbContext);
+
+            private set => shipmentRepository = value;
         }
 
         public void Dispose()

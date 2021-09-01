@@ -59,8 +59,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllText = AllText.Replace("\r", "");
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            //TODO: Check if Mediator is working correctly
-            //Geen errors en hij runt gwn, wel nog even debuggen
             var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
 
             if (result.Result.IsFailure)
