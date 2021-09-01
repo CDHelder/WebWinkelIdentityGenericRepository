@@ -6,11 +6,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Not yet Delivered Shipments</h1>
+<h3 style="color:red">@Model.FormResult</h3>
+<br />
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+<a style="font-size:16px; margin-left:auto" asp-page="Create">Create New</a>
+
 <table class="table">
     <thead>
         <tr>
@@ -33,28 +34,31 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Shipment) {
-        <tr>
-            <td>
-                @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndLocationStore.Address.City)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoadStockChange.DateChanged)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoadStockChange.AssociatedUser.UserName)
-            </td>
-            <td>
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Shipment)
+        {
+            <tr>
+                <td>
+                    @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndLocationStore.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.DateChanged)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.AssociatedUser.UserName)
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<a style="font-size:16px; margin-inline:auto" asp-page="HistoryIndex">History</a>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
@@ -20,11 +21,22 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             this.mediator = mediator;
         }
 
-        public IList<Shipment> Shipment { get;set; }
+        public List<Shipment> Shipment { get;set; }
+        public string FormResult { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            //Shipment = 
+            var result = mediator.Send(new AllShipmentQuery(false)).Result;
+
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
+
+            Shipment = result.Value;
+
+            return Page();
         }
     }
 }

@@ -71,6 +71,14 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return Page();
             }
 
+            var productStockChangeResult = mediator.Send(new BoolProductStockChangeExcistsQuery(list, StartLocationStoreId)).Result;
+
+            if (productStockChangeResult.IsFailure)
+            {
+                FormResult = productStockChangeResult.Error;
+                return Page();
+            }
+
             AllTextData = string.Join("\n", list);
             SelectedStartLocationStoreId = StartLocationStoreId;
             SelectedDeliveryLocationStoreId = DeliveryLocationStoreId;

@@ -34,7 +34,16 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
         [BindProperty]
         public List<int> AllTextDataList { get; set; }
         [BindProperty]
+        public string StartLocationCity { get; set; }
+        [BindProperty]
+        public string DeliveryLocationCity { get; set; }
+        [BindProperty]
+        public int DeliveryStoreId { get; set; }
+        [BindProperty]
         public string FormResult { get; set; }
+
+        [BindProperty]
+        public bool IsShipmentPossible { get; set; }
 
         public IActionResult OnGet()
         {
@@ -43,6 +52,10 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             AllTextDataList = AllTextDataArray.Select(x => int.Parse(x)).ToList();
 
             StoreProducts = mediator.Send(new AllStoreProductsQuery(AllTextDataList, SelectedStartLocationStoreId)).Result.Value;
+            StartLocationCity = mediator.Send(new StoreQuery(SelectedStartLocationStoreId)).Result.Value.Address.City;
+            DeliveryLocationCity = mediator.Send(new StoreQuery(SelectedDeliveryLocationStoreId)).Result.Value.Address.City;
+
+            DeliveryStoreId = SelectedDeliveryLocationStoreId;
 
             return Page();
         }
@@ -50,14 +63,14 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
         public IActionResult OnPost()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
-            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, true, SelectedDeliveryLocationStoreId));
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, true, DeliveryStoreId)).Result;
 
-            if (result.Result.IsFailure)
+            if (result.IsFailure)
             {
-                FormResult = result.Result.Error;
+                FormResult = result.Error;
             }
 
-            return LocalRedirect("/Shipments/Details?={}");
+            return LocalRedirect($"/Shipments/Details?id={result.Value}");
         }
     }
 }

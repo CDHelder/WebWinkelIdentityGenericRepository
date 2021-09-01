@@ -11,11 +11,11 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Commands
 {
-    public record UpdateAllStocksAndCreateAllProductStockChangesCommand(List<StoreProduct> StoreProducts, List<int> AllProductIds, string UserId, bool AddStock, bool IsShipment, int DeliveryLocationStoreId = 0) : IRequest<Result>
+    public record UpdateAllStocksAndCreateAllProductStockChangesCommand(List<StoreProduct> StoreProducts, List<int> AllProductIds, string UserId, bool AddStock, bool IsShipment, int DeliveryLocationStoreId = 0) : IRequest<Result<int>>
     {
     }
 
-    public class UpdateAllStocksAndCreateAllProductStockChangesCommandHandler : IRequestHandler<UpdateAllStocksAndCreateAllProductStockChangesCommand, Result>
+    public class UpdateAllStocksAndCreateAllProductStockChangesCommandHandler : IRequestHandler<UpdateAllStocksAndCreateAllProductStockChangesCommand, Result<int>>
     {
         private readonly IUnitOfWork unitOfWork;
         private LoadStockChange LSC;
@@ -27,7 +27,7 @@ namespace WebWinkelIdentity.Web.Application.Commands
             this.LSC.ProductStockChanges = new();
         }
 
-        public Task<Result> Handle(UpdateAllStocksAndCreateAllProductStockChangesCommand request, CancellationToken cancellationToken)
+        public Task<Result<int>> Handle(UpdateAllStocksAndCreateAllProductStockChangesCommand request, CancellationToken cancellationToken)
         {
             List<int> notSaveableProductIds = new();
             List<int> notLoggableProductIds = new();
@@ -64,30 +64,50 @@ namespace WebWinkelIdentity.Web.Application.Commands
             {
                 var notSaveProdIds = string.Join(", ", notSaveableProductIds.Select(i => i.ToString()).ToArray());
                 var productErrorMessage = $"Error: Couldnt save changes to product with id:{notSaveProdIds}";
-                return Task.FromResult(Result.Failure(productErrorMessage));
+                return Task.FromResult(Result.Failure<int>(productErrorMessage));
             }
             else if (notLoggableProductIds.Count() > 0)
             {
                 var notLogProdIds = string.Join(", ", notLoggableProductIds.Select(i => i.ToString()).ToArray());
                 var productErrorMessage = $"Error: Couldnt log the changes made to product with id:{notLogProdIds}";
-                return Task.FromResult(Result.Failure(productErrorMessage));
+                return Task.FromResult(Result.Failure<int>(productErrorMessage));
             }
 
             unitOfWork.LoadStockChangeRepository.Create(LSC);
 
+            Shipment shipment = new();
             if (request.IsShipment == true && request.DeliveryLocationStoreId != 0)
             {
-                var shipment = new Shipment { Delivered = false, DeliveredTime = null, LoadStockChange = LSC, StoreId = request.DeliveryLocationStoreId };
+                shipment = new Shipment { Delivered = false, DeliveredTime = null, LoadStockChange = LSC, StoreId = request.DeliveryLocationStoreId };
                 unitOfWork.ShipmentRepository.Create(shipment);
             }
 
             if (unitOfWork.SaveChanges() == false)
             {
-                return Task.FromResult(Result.Failure($"No changes were saved in the Database"));
+                return Task.FromResult(Result.Failure<int>($"No changes were saved in the Database"));
             }
 
-            //TODO: Geef de int value van de Id van LCS terug (hierdoor wordt redirecting makkelijker voor AddStock, RemoveStock en ConfirmCreateShipment)
-            return Task.FromResult(Result.Success());
+            //TODO: Check of dit goed werkt
+            if (request.IsShipment == true && request.DeliveryLocationStoreId != 0)
+            {
+                //var createdShipmentId = unitOfWork.ShipmentRepository.Get
+                //    (
+                //    filter: s => s.Delivered == shipment.Delivered && s.DeliveredTime == shipment.DeliveredTime 
+                //        && s.StoreId == shipment.StoreId && s.LoadStockChange == LSC
+                //    ).Id;
+
+                return Task.FromResult(Result.Success(shipment.Id));
+            }
+            else
+            {
+                //var createdLCSId = unitOfWork.LoadStockChangeRepository.Get
+                //    (
+                //    filter: lsc => lsc.DateChanged == LSC.DateChanged && lsc.ExtraInfo == LSC.ExtraInfo 
+                //        && lsc.ProductStockChanges == LSC.ProductStockChanges && lsc.UserId == LSC.UserId
+                //    ).Id;
+
+                return Task.FromResult(Result.Success(LSC.Id));
+            }
         }
 
         private bool CreateAndSaveProductStockChanges(StoreProduct storeProduct, int changeQuantity, string userId, bool addStock)

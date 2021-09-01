@@ -2,30 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
     public class HistoryIndexModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public HistoryIndexModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public HistoryIndexModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
-        public IList<Shipment> Shipment { get;set; }
+        public List<Shipment> Shipment { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task OnGetAsync()
+        public IActionResult OnGet()
         {
-            Shipment = await _context.Shipments
-                .Include(s => s.EndLocationStore)
-                .Include(s => s.LoadStockChange).ToListAsync();
+            var result = mediator.Send(new AllShipmentQuery(true)).Result;
+
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
+
+            Shipment = result.Value;
+
+            return Page();
         }
     }
 }

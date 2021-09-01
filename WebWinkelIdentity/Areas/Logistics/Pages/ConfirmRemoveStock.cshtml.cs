@@ -54,16 +54,14 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
         {
             //TODO: Check if mediator works correctly
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
-            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, false));
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, false, false)).Result;
 
-            if (result.Result.IsFailure)
+            if (result.IsFailure)
             {
-                FormResult = result.Result.Error;
+                FormResult = result.Error;
             }
 
-            AllTextData = string.Join("\n", AllTextDataList);
-            SuccesStoreId = PostStoreId;
-            return RedirectToPage("/SuccesfullyRemovedStock");
+            return LocalRedirect($"/Logistics/LoadStockChangeDetail?id={result.Value}");
         }
     }
 }

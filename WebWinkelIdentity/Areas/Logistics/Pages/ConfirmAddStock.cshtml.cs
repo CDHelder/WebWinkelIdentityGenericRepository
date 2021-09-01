@@ -50,20 +50,17 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             return Page();
         }
 
-        //TODO: Maybe LoadStockChangeId terug geven en redirecten naar details page ervan??
         public IActionResult OnPost()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
-            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, true, false));
+            var result = mediator.Send(new UpdateAllStocksAndCreateAllProductStockChangesCommand(StoreProducts, AllTextDataList, userId, true, false)).Result;
 
-            if (result.Result.IsFailure)
+            if (result.IsFailure)
             {
-                FormResult = result.Result.Error;
+                FormResult = result.Error;
             }
 
-            AllTextData = string.Join("\n", AllTextDataList);
-            SuccesStoreId = PostStoreId;
-            return RedirectToPage("/SuccesfullyAddedStock");
+            return LocalRedirect($"/Logistics/LoadStockChangeDetail?id={result.Value}");
         }
     }
 }

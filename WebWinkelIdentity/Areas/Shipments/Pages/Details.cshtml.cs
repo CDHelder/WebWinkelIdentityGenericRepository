@@ -21,16 +21,16 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 
         public Shipment Shipment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Shipment = await _context.Shipments
+            Shipment =  _context.Shipments
                 .Include(s => s.EndLocationStore)
-                .Include(s => s.LoadStockChange).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(s => s.LoadStockChange).FirstOrDefaultAsync(m => m.Id == id).Result;
 
             if (Shipment == null)
             {

@@ -6,8 +6,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>HistoryIndex</h1>
-
+<h1>Delivered Shipments</h1>
+<h3 style="color:red">@Model.FormResult</h3>
+<br />
 <p>
     <a asp-page="Create">Create New</a>
 </p>
@@ -15,41 +16,49 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Shipment[0].DeliveredTime)
+                Total Amount
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Shipment[0].Delivered)
+                From
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Shipment[0].EndLocationStore)
+                To
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Shipment[0].LoadStockChange)
+                Create Date
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].LoadStockChange.AssociatedUser.UserName)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Shipment) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeliveredTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Delivered)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndLocationStore.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoadStockChange.Id)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Shipment)
+        {
+            <tr>
+                <td>
+                    @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndLocationStore.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.DateChanged)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadStockChange.AssociatedUser.UserName)
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<a style="font-size:16px; margin-inline:auto" asp-page="Index">Not yet delivered shipments</a>
