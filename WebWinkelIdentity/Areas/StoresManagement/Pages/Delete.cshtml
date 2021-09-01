@@ -1,0 +1,179 @@
+﻿@page
+@model DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Address.Country)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Store.Address.Country)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Address.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Store.Address.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Address.PostalCode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Store.Address.PostalCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Address.Streetname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Store.Address.Streetname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Store.Address.HouseNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Store.Address.HouseNumber)
+        </dd>
+    </dl>
+
+    <h4>Opening times</h4>
+    <br />
+    <table>
+        <tr>
+            <td><b>Monday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.MondayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.MondayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Tuesday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.TuesdayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.TuesdayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Wednesday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.WednesdayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.WednesdayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Thursday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.ThursdayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.ThursdayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Friday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.FridayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.FridayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Saturday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.SaturdayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.SaturdayClosingTime)
+            </td>
+        </tr>
+        <tr>
+            <td><b>Sunday</b></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Store.WeekOpeningTimes.SundayOpeningTime) &nbsp;-&nbsp; @Html.DisplayFor(model => model.Store.WeekOpeningTimes.SundayClosingTime)
+            </td>
+        </tr>
+    </table>
+    <br />
+
+    @if (Model.Products.Count() >= 1)
+    {
+        <h4>Products with stock in store</h4>
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Price)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Color)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Fabric)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Brand)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Products[0].Category)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Products)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Color)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Fabric)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Brand.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.Name)
+                        </td>
+                        <td>
+                            <a asp-area="ProductsManagement" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h4 style="color:red">Warning!</h4>
+        <h5>The store still has products with stock</h5>
+        <h5>Deleting the store will also delete all the stock</h5>
+        <h5>Are you sure you wish to continue?</h5>
+        <br />
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="Store.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

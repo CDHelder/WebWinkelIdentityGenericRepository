@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210901120247_CreateShipmentTable")]
+    partial class CreateShipmentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -479,9 +481,6 @@ namespace WebWinkelIdentity.Data.Migrations
 
                     b.Property<string>("ExtraInfo")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ShipmentId")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1264,11 +1263,11 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "52a5d716-a649-4476-b316-108d96c56112",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d18b13a7-84f8-4df7-94d9-559b81c528b7",
+                            ConcurrencyStamp = "da5c0e6d-3719-45d1-8978-f38bac617afc",
                             Email = "Jaap@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEAWtvaw2g2PTnBGC4ZvvAaGuZt+S3mSKKAkbyFZrX49NBiJ0+RGOZ0oT7a2xFI9Vxg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEUNJNju3PaDGosne2c1lhZgIiNpBwKs30KMaFj2GXqO+1ihTF378sa+FlWXmRw+eQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1304,13 +1303,13 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "7036d951-7cc8-488f-b95b-10c2e96c31c9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ac73fccf-5076-487c-9819-9263b7b8b4bf",
+                            ConcurrencyStamp = "e14b14c1-d2e7-4833-964d-fcb87c597093",
                             Email = "Samantha@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEI9PyNxiHRvvveDoi9X4mOR8gSyaEsurEugZ8JQ2mjVimzpNmBgJUy2GnLmv0IqL1g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFzEB7GV5Vc53Okfw/8DBAeMfFe8U+TgxIYaswxPpyklRrmugE4/TU9gaF1+0FtboA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "414299d1-d07f-41d6-9dcf-63593fd1a4d6",
+                            SecurityStamp = "f992b81d-3817-47cd-ab70-7356cfc3caf9",
                             TwoFactorEnabled = false,
                             UserName = "Samantha123",
                             AddressId = 3,
@@ -1477,7 +1476,7 @@ namespace WebWinkelIdentity.Data.Migrations
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Shipment", b =>
                 {
                     b.HasOne("WebWinkelIdentity.Core.StoreEntities.LoadStockChange", "LoadStockChange")
-                        .WithOne("Shipment")
+                        .WithOne()
                         .HasForeignKey("WebWinkelIdentity.Core.StoreEntities.Shipment", "LoadStockChangeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1589,8 +1588,6 @@ namespace WebWinkelIdentity.Data.Migrations
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.LoadStockChange", b =>
                 {
                     b.Navigation("ProductStockChanges");
-
-                    b.Navigation("Shipment");
                 });
 
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Store", b =>

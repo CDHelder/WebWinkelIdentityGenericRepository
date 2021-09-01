@@ -1,0 +1,190 @@
+﻿@page
+@model EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Store</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Store.Id" />
+            <div class="form-group">
+                <label asp-for="Store.Address.Country" class="control-label"></label>
+                <input asp-for="Store.Address.Country" class="form-control" />
+                <span asp-validation-for="Store.Address.Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Store.Address.City" class="control-label"></label>
+                <input asp-for="Store.Address.City" class="form-control" />
+                <span asp-validation-for="Store.Address.City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Store.Address.PostalCode" class="control-label"></label>
+                <input asp-for="Store.Address.PostalCode" class="form-control" />
+                <span asp-validation-for="Store.Address.PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Store.Address.Streetname" class="control-label"></label>
+                <input asp-for="Store.Address.Streetname" class="form-control" />
+                <span asp-validation-for="Store.Address.Streetname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Store.Address.HouseNumber" class="control-label"></label>
+                <input asp-for="Store.Address.HouseNumber" class="form-control" />
+                <span asp-validation-for="Store.Address.HouseNumber" class="text-danger"></span>
+            </div>
+
+            <br />
+
+            <h4>Opening times</h4>
+            <br />
+            <table>
+                <tr>
+                    <td>Monday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.MondayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.MondayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.MondayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.MondayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tuesday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.TuesdayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.TuesdayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.TuesdayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.TuesdayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Wednesday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.WednesdayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.WednesdayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.WednesdayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.WednesdayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Thursday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.ThursdayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.ThursdayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.ThursdayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.ThursdayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Friday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.FridayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.FridayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.FridayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.FridayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Saturday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.SaturdayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.SaturdayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.SaturdayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.SaturdayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sunday</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.SundayOpeningTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.SundayOpeningTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                    <td>&nbsp;-&nbsp;</td>
+                    <td>
+                        <div class="form-group">
+                            <input asp-for="Store.WeekOpeningTimes.SundayClosingTime" class="form-control" />
+                            <span asp-validation-for="Store.WeekOpeningTimes.SundayClosingTime" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

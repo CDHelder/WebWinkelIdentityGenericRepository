@@ -1,0 +1,61 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>All Stores</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Store[0].Address.Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store[0].Address.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store[0].Address.PostalCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store[0].Address.Streetname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store[0].Address.HouseNumber)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Store) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.Country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.PostalCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.Streetname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address.HouseNumber)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

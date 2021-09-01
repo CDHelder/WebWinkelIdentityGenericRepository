@@ -1,0 +1,54 @@
+﻿@page
+@model WebWinkelIdentity.Web.Areas.Shipments.Pages.HistoryIndexModel
+
+@{
+    ViewData["Title"] = "HistoryIndex";
+}
+
+<h1>HistoryIndex</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].DeliveredTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].Delivered)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].EndLocationStore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].LoadStockChange)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Shipment) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeliveredTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Delivered)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndLocationStore.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoadStockChange.Id)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

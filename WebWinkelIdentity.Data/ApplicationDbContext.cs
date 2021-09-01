@@ -20,6 +20,7 @@ namespace WebWinkelIdentity.Data
         public DbSet<StoreProduct> StoreProducts { get; set; }
         public DbSet<ProductStockChange> ProductStockChanges { get; set; }
         public DbSet<LoadStockChange> LoadStockChanges { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
 
@@ -165,7 +166,7 @@ namespace WebWinkelIdentity.Data
             new Product { Id = 15, Name = "Versace Broek", Price = 69.95M, Description = "Donkere broek met versace logo", BrandId = 2, CategoryId = 1,  Color = "Dark-Blue", Fabric = "100% Cotton", Size = "L", },
             new Product { Id = 16, Name = "Versace Broek", Price = 69.95M, Description = "Donkere broek met versace logo", BrandId = 2, CategoryId = 1,  Color = "Dark-Blue", Fabric = "100% Cotton", Size = "XL",},
             };
-            var storeProducts = new List<StoreProduct> 
+            var storeProducts = new List<StoreProduct>
             {
                 new StoreProduct {Id = 1, StoreId = 1, ProductId = 1, Quantity = 2, InTransport = false },
                 new StoreProduct {Id = 2, StoreId = 2, ProductId = 1, Quantity = 1, InTransport = false },
@@ -203,19 +204,27 @@ namespace WebWinkelIdentity.Data
 
             var timespan9 = new TimeSpan(9, 0, 0);
             var timespan17 = new TimeSpan(17, 0, 0);
-            var dayopeningtimes = new List<DayOpeningTime>
-            {
-            new DayOpeningTime { Id = 1, WeekOpeningTimesId = 1, Day = "Monday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 2, WeekOpeningTimesId = 1, Day = "Tuesday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 3, WeekOpeningTimesId = 1, Day = "Wednesday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 4, WeekOpeningTimesId = 1, Day = "Thursday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 5, WeekOpeningTimesId = 1, Day = "Friday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 6, WeekOpeningTimesId = 1, Day = "Saterday", OpeningTime = timespan9, ClosingTime = timespan17, IsClosed = false },
-            new DayOpeningTime { Id = 7, WeekOpeningTimesId = 1, Day = "Sunday", IsClosed = true }
-            };
+
             var weekopeningtimes = new List<WeekOpeningTimes>
             {
-            new WeekOpeningTimes { Id = 1 }
+                new WeekOpeningTimes
+                {
+                    Id = 1,
+                    MondayOpeningTime = new TimeSpan(9,0,0),
+                    MondayClosingTime = new TimeSpan(17,0,0),
+                    TuesdayOpeningTime = new TimeSpan(9,0,0),
+                    TuesdayClosingTime = new TimeSpan(17,0,0),
+                    WednesdayOpeningTime = new TimeSpan(9,0,0),
+                    WednesdayClosingTime = new TimeSpan(17,0,0),
+                    ThursdayOpeningTime = new TimeSpan(9,0,0),
+                    ThursdayClosingTime = new TimeSpan(17,0,0),
+                    FridayOpeningTime = new TimeSpan(9,0,0),
+                    FridayClosingTime = new TimeSpan(17,0,0),
+                    SaturdayOpeningTime = new TimeSpan(9,0,0),
+                    SaturdayClosingTime = new TimeSpan(17,0,0),
+                    SundayOpeningTime = new TimeSpan(0,0,0),
+                    SundayClosingTime = new TimeSpan(0,0,0)
+                }
             };
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -258,19 +267,20 @@ namespace WebWinkelIdentity.Data
                 psc.ToTable("LoadStockChanges");
                 psc.HasMany(lsc => lsc.ProductStockChanges).WithOne().HasForeignKey(psc => psc.LoadStockChangeId);
                 psc.HasOne(lsc => lsc.AssociatedUser).WithMany().HasForeignKey(lsc => lsc.UserId);
+                psc.HasOne(lsc => lsc.Shipment).WithOne(s => s.LoadStockChange).HasForeignKey<LoadStockChange>(lsc => lsc.ShipmentId);
+            });
+
+            builder.Entity<Shipment>(s =>
+            {
+                s.ToTable("Shipments");
+                s.HasOne(sh => sh.EndLocationStore).WithMany().HasForeignKey(els => els.StoreId);
+                s.HasOne(sh => sh.LoadStockChange).WithOne(lsc => lsc.Shipment).HasForeignKey<Shipment>(lsc => lsc.LoadStockChangeId);
             });
 
             builder.Entity<WeekOpeningTimes>(wot =>
             {
                 wot.ToTable("WeekOpeningTimes");
                 wot.HasData(weekopeningtimes);
-                wot.HasMany(u => u.DayOpeningTimes).WithOne().HasForeignKey(dot => dot.WeekOpeningTimesId);
-            });
-
-            builder.Entity<DayOpeningTime>(dot =>
-            {
-                dot.ToTable("DayOpeningTimes");
-                dot.HasData(dayopeningtimes);
             });
 
             builder.Entity<Supplier>(s =>

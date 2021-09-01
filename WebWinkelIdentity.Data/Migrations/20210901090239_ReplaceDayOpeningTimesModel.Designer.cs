@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210901090239_ReplaceDayOpeningTimesModel")]
+    partial class ReplaceDayOpeningTimesModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -480,9 +482,6 @@ namespace WebWinkelIdentity.Data.Migrations
                     b.Property<string>("ExtraInfo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ShipmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -751,35 +750,6 @@ namespace WebWinkelIdentity.Data.Migrations
                     b.HasIndex("StoreProductId");
 
                     b.ToTable("ProductStockChanges");
-                });
-
-            modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Shipment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Delivered")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LoadStockChangeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LoadStockChangeId")
-                        .IsUnique();
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("Shipments");
                 });
 
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Store", b =>
@@ -1264,11 +1234,11 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "52a5d716-a649-4476-b316-108d96c56112",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d18b13a7-84f8-4df7-94d9-559b81c528b7",
+                            ConcurrencyStamp = "753cbb99-e109-4e7b-b4e7-0b289adf14bc",
                             Email = "Jaap@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEAWtvaw2g2PTnBGC4ZvvAaGuZt+S3mSKKAkbyFZrX49NBiJ0+RGOZ0oT7a2xFI9Vxg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIRdZ0G9iOVOlOsJG4+9q4C1Y8E23Z8sFS15uOEQ6gSppkzSwC013hpmDmGX2ZCKxw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1304,13 +1274,13 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "7036d951-7cc8-488f-b95b-10c2e96c31c9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ac73fccf-5076-487c-9819-9263b7b8b4bf",
+                            ConcurrencyStamp = "d4d5276b-4874-4b25-be2a-07839be774a1",
                             Email = "Samantha@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEI9PyNxiHRvvveDoi9X4mOR8gSyaEsurEugZ8JQ2mjVimzpNmBgJUy2GnLmv0IqL1g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDd2t3fzUWOC3uI2Q0ak4sDb6uX2IQQ7Q3zpJCuyDaSDbokCYj6SzfB4FLKwhoLXMQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "414299d1-d07f-41d6-9dcf-63593fd1a4d6",
+                            SecurityStamp = "d582a175-408d-4c36-88e5-3b4d4a8440c0",
                             TwoFactorEnabled = false,
                             UserName = "Samantha123",
                             AddressId = 3,
@@ -1474,25 +1444,6 @@ namespace WebWinkelIdentity.Data.Migrations
                     b.Navigation("StoreProduct");
                 });
 
-            modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Shipment", b =>
-                {
-                    b.HasOne("WebWinkelIdentity.Core.StoreEntities.LoadStockChange", "LoadStockChange")
-                        .WithOne("Shipment")
-                        .HasForeignKey("WebWinkelIdentity.Core.StoreEntities.Shipment", "LoadStockChangeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebWinkelIdentity.Core.StoreEntities.Store", "EndLocationStore")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EndLocationStore");
-
-                    b.Navigation("LoadStockChange");
-                });
-
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Store", b =>
                 {
                     b.HasOne("WebWinkelIdentity.Core.Address", "Address")
@@ -1589,8 +1540,6 @@ namespace WebWinkelIdentity.Data.Migrations
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.LoadStockChange", b =>
                 {
                     b.Navigation("ProductStockChanges");
-
-                    b.Navigation("Shipment");
                 });
 
             modelBuilder.Entity("WebWinkelIdentity.Core.StoreEntities.Store", b =>

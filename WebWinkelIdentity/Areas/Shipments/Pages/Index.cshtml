@@ -1,0 +1,59 @@
+﻿@page
+@model WebWinkelIdentity.Web.Areas.Shipments.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Total Amount
+            </th>
+            <th>
+                From
+            </th>
+            <th>
+                To
+            </th>
+            <th>
+                Create Date
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shipment[0].LoadStockChange.AssociatedUser.UserName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Shipment) {
+        <tr>
+            <td>
+                @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndLocationStore.Address.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoadStockChange.DateChanged)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoadStockChange.AssociatedUser.UserName)
+            </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
