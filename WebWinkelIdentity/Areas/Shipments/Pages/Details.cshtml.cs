@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public DetailsModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public DetailsModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         public Shipment Shipment { get; set; }
+        public string FormResult { get; set; }
 
+        //TODO: Doe frontend van deze page (tip: gebruik LoadStockChange rontend) cuz models bijna hetzelfde
         public IActionResult OnGet(int id)
         {
             if (id == null)
@@ -28,14 +32,16 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return NotFound();
             }
 
-            Shipment =  _context.Shipments
-                .Include(s => s.EndLocationStore)
-                .Include(s => s.LoadStockChange).FirstOrDefaultAsync(m => m.Id == id).Result;
+            var result = mediator.Send(new ShipmentQuery(id)).Result;
 
-            if (Shipment == null)
+            if (result.IsFailure)
             {
-                return NotFound();
+                FormResult = result.Error;
+                return Page();
             }
+
+            Shipment = result.Value;
+
             return Page();
         }
     }

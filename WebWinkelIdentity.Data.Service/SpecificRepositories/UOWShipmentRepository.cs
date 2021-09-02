@@ -54,5 +54,35 @@ namespace WebWinkelIdentity.Data.Service.SpecificRepositories
 
             return list;
         }
+
+        public Shipment GetShipmentAndIncludes(int id)
+        {
+            return dbContext.Shipments
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(psc => psc.AssociatedUser)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Brand)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Category)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Store)
+                .ThenInclude(p => p.Address)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Store)
+                .Include(s => s.EndLocationStore)
+                .ThenInclude(es => es.Address)
+                .Where(s => s.Id == id)
+                .FirstOrDefault();
+        }
     }
 }
