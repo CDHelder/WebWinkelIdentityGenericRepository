@@ -36,9 +36,10 @@
     <tbody>
         @foreach (var item in Model.Shipment)
         {
+            var stockChange = item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange) * -1;
             <tr>
                 <td>
-                    @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
+                    @stockChange
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)

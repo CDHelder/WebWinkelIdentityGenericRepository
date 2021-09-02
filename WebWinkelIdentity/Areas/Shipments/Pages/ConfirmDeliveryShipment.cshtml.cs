@@ -1,27 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data;
-using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
-    public class DetailsModel : PageModel
+    public class ConfirmDeliveryShipmentModel : PageModel
     {
         private readonly IMediator mediator;
 
-        public DetailsModel(IMediator mediator)
+        public ConfirmDeliveryShipmentModel(IMediator mediator)
         {
             this.mediator = mediator;
         }
 
-        public Shipment Shipment { get; set; }
+        public List<Shipment> Shipment { get; set; }
         public string FormResult { get; set; }
 
         public IActionResult OnGet(int id)
@@ -31,7 +28,8 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return NotFound();
             }
 
-            var result = mediator.Send(new ShipmentQuery(id)).Result;
+            //TODO: Maak AllShipmentsQuery met List<int> = null zodat ie een lijst met == ids kan meegeven
+            //var result = mediator.Send(new ShipmentQuery(id)).Result;
 
             if (result.IsFailure)
             {
@@ -42,6 +40,12 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             Shipment = result.Value;
 
             return Page();
+        }
+
+        public IActionResult OnPost()
+        {
+            //TODO: Maak Mediator voor het implementeren van alle Shipments
+            return RedirectToPage("./HistoryIndex");
         }
     }
 }

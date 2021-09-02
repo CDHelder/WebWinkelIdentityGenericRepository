@@ -9,9 +9,8 @@
 <h1>Delivered Shipments</h1>
 <h3 style="color:red">@Model.FormResult</h3>
 <br />
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+<a style="font-size:16px; margin-left:auto" asp-page="Create">Create New</a>
+
 <table class="table">
     <thead>
         <tr>
@@ -36,9 +35,10 @@
     <tbody>
         @foreach (var item in Model.Shipment)
         {
+            var stockChange = item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange) * -1;
             <tr>
                 <td>
-                    @item.LoadStockChange.ProductStockChanges.Sum(psc => psc.StockChange)
+                    @stockChange
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.LoadStockChange.ProductStockChanges[0].StoreProduct.Store.Address.City)

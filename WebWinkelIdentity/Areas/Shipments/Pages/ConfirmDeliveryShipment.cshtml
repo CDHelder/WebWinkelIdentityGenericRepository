@@ -1,19 +1,10 @@
 ﻿@page
-@model WebWinkelIdentity.Web.Areas.Shipments.Pages.DetailsModel
-
+@model WebWinkelIdentity.Web.Areas.Shipments.Pages.ConfirmDeliveryShipmentModel
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
-<br>
-
-@if (Model.FormResult != null)
-{
-    <h3 style="color:red">@Model.FormResult</h3>
-    <br />
-}
 
 <h4> @Model.Shipment.LoadStockChange.AssociatedUser.UserName made this shipment at @Model.Shipment.LoadStockChange.DateChanged</h4>
 <h5> Delivered: @Model.Shipment.Delivered</h5>
@@ -112,6 +103,3 @@
     </tbody>
 </table>
 <br />
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>

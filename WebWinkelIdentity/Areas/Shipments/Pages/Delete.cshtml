@@ -7,41 +7,114 @@
 }
 
 <h1>Delete</h1>
+<h2>Are you sure you want to delete the following?</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Shipment</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Shipment.DeliveredTime)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Shipment.DeliveredTime)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Shipment.Delivered)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Shipment.Delivered)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Shipment.EndLocationStore)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Shipment.EndLocationStore.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Shipment.LoadStockChange)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Shipment.LoadStockChange.Id)
-        </dd>
-    </dl>
-    
-    <form method="post">
-        <input type="hidden" asp-for="Shipment.Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
-    </form>
-</div>
+@if (Model.FormResult != null)
+{
+    <h3 style="color:red">@Model.FormResult</h3>
+    <br />
+}
+
+<h4> @Model.Shipment.LoadStockChange.AssociatedUser.UserName made this shipment at @Model.Shipment.LoadStockChange.DateChanged</h4>
+<h5> Delivered: @Model.Shipment.Delivered</h5>
+<table class="table">
+    <thead>
+        <tr>
+            @if (Model.Shipment.DeliveredTime != null)
+            {
+                <th>
+                    @Html.DisplayNameFor(model => Model.Shipment.DeliveredTime)
+                </th>
+            }
+            <th>
+                From
+            </th>
+            <th>
+                Stock Change
+            </th>
+            <th>
+                To
+            </th>
+            <th>
+                Current Stock
+            </th>
+            <th>
+                New Stock
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Size)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Price)
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Brand
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var PSC in Model.Shipment.LoadStockChange.ProductStockChanges)
+        {
+            var stockChange = PSC.StockChange * -1;
+            <tr>
+                @if (Model.Shipment.DeliveredTime != null)
+                {
+                    <th>
+                        @Html.DisplayFor(model => model.Shipment.DeliveredTime)
+                    </th>
+                }
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
+                </td>
+                <td>
+                    @stockChange
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Shipment.EndLocationStore.Address.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Quantity)
+                </td>
+                <td>
+                    @(PSC.StoreProduct.Quantity + (PSC.StockChange * -1))
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Size)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Brand.Name)
+                </td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+
+<form method="post">
+    <input type="hidden" asp-for="Shipment.Id" />
+    <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <a asp-page="./Index">Back to List</a>
+</form>
