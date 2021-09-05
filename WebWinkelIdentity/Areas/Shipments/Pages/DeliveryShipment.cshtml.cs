@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
     public class DeliveryShipmentModel : PageModel
-    {
     {
         private readonly IMediator mediator;
 
@@ -44,12 +44,12 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             AllText = AllText.Replace("\r", "");
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            //TODO: Shipments excists (Multiple)
-            //var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
+            var result = mediator.Send(new ShipmentsExcistQuery(list));
 
             if (result.Result.IsFailure)
             {
                 FormResult = result.Result.Error;
+                return Page();
             }
 
             AllTextData = string.Join("\n", list);

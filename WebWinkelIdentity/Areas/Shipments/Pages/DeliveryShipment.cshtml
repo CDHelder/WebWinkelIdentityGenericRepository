@@ -8,13 +8,15 @@
 <h3 style="color:red">@Model.FormResult</h3>
 <br />
 
+<h2>Enter the shipment id on the sticker on the box</h2>
+
 <form method="post">
     <div class="form-group">
         <textarea asp-for="AllText" class="form-group"
                   style="min-width:300px; min-height:550px; font-size:30pt"
-                  placeholder="Make sure the id of the item on its label is in the textbox
+                  placeholder="Make sure the id of the shipment is in the textbox
 
-and that every id has its own line">
+and that every shipment id has its own line">
         </textarea>
         <span asp-validation-for="AllText" class="text-danger"></span>
         <div class="form-group">

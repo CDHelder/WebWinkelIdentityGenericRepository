@@ -31,20 +31,20 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             //TODO: Maak AllShipmentsQuery met List<int> = null zodat ie een lijst met == ids kan meegeven
             //var result = mediator.Send(new ShipmentQuery(id)).Result;
 
-            if (result.IsFailure)
-            {
-                FormResult = result.Error;
-                return Page();
-            }
+            //if (result.IsFailure)
+            //{
+            //    FormResult = result.Error;
+            //    return Page();
+            //}
 
-            Shipment = result.Value;
+            //Shipment = result.Value;
 
             return Page();
         }
 
         public IActionResult OnPost()
         {
-            //TODO: Maak Mediator voor het implementeren van alle Shipments
+            //TODO: Maak Mediator voor het implementeren van alle Shipments zijn bezorgd
             return RedirectToPage("./HistoryIndex");
         }
     }
