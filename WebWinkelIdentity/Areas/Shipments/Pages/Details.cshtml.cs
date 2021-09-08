@@ -22,6 +22,7 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
         }
 
         public Shipment Shipment { get; set; }
+        public List<StoreProduct> StoreProducts { get; set; }
         public string FormResult { get; set; }
 
         public IActionResult OnGet(int id)
@@ -31,15 +32,22 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return NotFound();
             }
 
-            var result = mediator.Send(new ShipmentQuery(id)).Result;
-
-            if (result.IsFailure)
+            var resultShipment = mediator.Send(new ShipmentQuery(id)).Result;
+            if (resultShipment.IsFailure)
             {
-                FormResult = result.Error;
+                FormResult = resultShipment.Error;
                 return Page();
             }
+            Shipment = resultShipment.Value;
 
-            Shipment = result.Value;
+            var prodIds = Shipment.LoadStockChange.ProductStockChanges.Select(a => a.StoreProduct.ProductId).ToList();
+            var resultStoreProducts = mediator.Send(new AllStoreProductsQuery(prodIds, Shipment.StoreId)).Result;
+            if (resultStoreProducts.IsFailure)
+            {
+                FormResult = resultStoreProducts.Error;
+                return Page();
+            }
+            StoreProducts = resultStoreProducts.Value;
 
             return Page();
         }

@@ -23,7 +23,7 @@
 }
 <h5> Delivered: @Model.Shipment.Delivered</h5>
 <table class="table">
-    <thead>
+    <thead> 
         <tr>
             <th>
                 From
@@ -37,9 +37,12 @@
             <th>
                 Current Stock
             </th>
-            <th>
-                New Stock
-            </th>
+            @if (Model.Shipment.Delivered == false)
+            {
+                <th>
+                    New Stock
+                </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => Model.Shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Id)
             </th>
@@ -65,42 +68,46 @@
         @foreach (var PSC in Model.Shipment.LoadStockChange.ProductStockChanges)
         {
             var stockChange = PSC.StockChange * -1;
-            <tr>
+            var currentStock = Model.StoreProducts.FirstOrDefault(a => a.ProductId == PSC.StoreProduct.ProductId).Quantity;
+        <tr>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
+            </td>
+            <td>
+                @stockChange
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Shipment.EndLocationStore.Address.City)
+            </td>
+            <td>
+                @currentStock
+            </td>
+            @if (Model.Shipment.Delivered == false)
+            {
                 <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
+                    @(currentStock + (PSC.StockChange * -1))
                 </td>
-                <td>
-                    @stockChange
-                </td>
-                <td>
-                    @Html.DisplayFor(model => model.Shipment.EndLocationStore.Address.City)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Quantity)
-                </td>
-                <td>
-                    @(PSC.StoreProduct.Quantity + (PSC.StockChange * -1))
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Size)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Category.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Product.Brand.Name)
-                </td>
-                <td></td>
-            </tr>
+            }
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Size)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => PSC.StoreProduct.Product.Brand.Name)
+            </td>
+            <td></td>
+        </tr>
         }
     </tbody>
 </table>
