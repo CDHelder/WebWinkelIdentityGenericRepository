@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
@@ -18,33 +21,51 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
             this.mediator = mediator;
         }
 
-        public List<Shipment> Shipment { get; set; }
-        public string FormResult { get; set; }
+        public List<Shipment> Shipments { get; set; }
 
-        public IActionResult OnGet(int id)
+        [TempData]
+        public string FormResult { get; set; }
+        [BindProperty]
+        public string Ids { get; set; }
+
+        public IActionResult OnGet(string ids)
         {
-            if (id == null)
+            if (ids == null)
             {
                 return NotFound();
             }
 
-            //TODO: Maak AllShipmentsQuery met List<int> = null zodat ie een lijst met == ids kan meegeven
-            //var result = mediator.Send(new ShipmentQuery(id)).Result;
+            var intIds = ids.Split(", ").Select(Int32.Parse).ToList();
 
-            //if (result.IsFailure)
-            //{
-            //    FormResult = result.Error;
-            //    return Page();
-            //}
+            var result = mediator.Send(new AllShipmentQuery(false, intIds)).Result;
 
-            //Shipment = result.Value;
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
+
+            Shipments = result.Value;
+            Ids = ids;
 
             return Page();
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPost(string ids)
         {
             //TODO: Maak Mediator voor het implementeren van alle Shipments zijn bezorgd
+
+            var intIds = ids.Split(", ").Select(Int32.Parse).ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());
+
+            var result = mediator.Send(new ShipmentsDeliveryCommand(intIds, userId)).Result;
+
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
+
             return RedirectToPage("./HistoryIndex");
         }
     }

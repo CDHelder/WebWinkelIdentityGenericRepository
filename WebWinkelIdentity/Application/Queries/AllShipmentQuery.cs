@@ -11,7 +11,7 @@ using WebWinkelIdentity.Data.Service.Interfaces;
 
 namespace WebWinkelIdentity.Web.Application.Queries
 {
-    public record AllShipmentQuery(bool IsDelivered) : IRequest<Result<List<Shipment>>>
+    public record AllShipmentQuery(bool IsDelivered, List<int> Ids = null) : IRequest<Result<List<Shipment>>>
     {
     }
 
@@ -26,7 +26,16 @@ namespace WebWinkelIdentity.Web.Application.Queries
 
         public Task<Result<List<Shipment>>> Handle(AllShipmentQuery request, CancellationToken cancellationToken)
         {
-            var shipslmao = unitOfWork.ShipmentRepository.GetAllShipmentsAndIncludes(request.IsDelivered);
+            var shipslmao = new List<Shipment>();
+
+            if (request.Ids == null)
+            {
+                shipslmao = unitOfWork.ShipmentRepository.GetAllShipmentsAndIncludes(request.IsDelivered);
+            }
+            else if(request.Ids != null)
+            {
+                shipslmao = unitOfWork.ShipmentRepository.GetAllShipmentsAndIncludes(request.IsDelivered, request.Ids);
+            }
 
             if (shipslmao == null)
             {

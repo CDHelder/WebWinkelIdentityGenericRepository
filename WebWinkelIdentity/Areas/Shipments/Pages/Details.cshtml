@@ -15,17 +15,16 @@
     <br />
 }
 
+<h4>ShipmentId: @Model.Shipment.Id</h4>
 <h4> @Model.Shipment.LoadStockChange.AssociatedUser.UserName made this shipment at @Model.Shipment.LoadStockChange.DateChanged</h4>
+@if (Model.Shipment.Delivered == true && Model.Shipment.DeliveredTime != null)
+{
+    <h4> @Model.Shipment.UserThatConfirmed.UserName confirmed this shipment at @Model.Shipment.DeliveredTime</h4>
+}
 <h5> Delivered: @Model.Shipment.Delivered</h5>
 <table class="table">
     <thead>
         <tr>
-            @if (Model.Shipment.DeliveredTime != null)
-            {
-                <th>
-                    @Html.DisplayNameFor(model => Model.Shipment.DeliveredTime)
-                </th>
-            }
             <th>
                 From
             </th>
@@ -67,12 +66,6 @@
         {
             var stockChange = PSC.StockChange * -1;
             <tr>
-                @if (Model.Shipment.DeliveredTime != null)
-                {
-                    <th>
-                        @Html.DisplayFor(model => model.Shipment.DeliveredTime)
-                    </th>
-                }
                 <td>
                     @Html.DisplayFor(model => PSC.StoreProduct.Store.Address.City)
                 </td>

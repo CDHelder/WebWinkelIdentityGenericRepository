@@ -81,8 +81,47 @@ namespace WebWinkelIdentity.Data.Service.SpecificRepositories
                 .ThenInclude(p => p.Store)
                 .Include(s => s.EndLocationStore)
                 .ThenInclude(es => es.Address)
+                .Include(s => s.UserThatConfirmed)
                 .Where(s => s.Id == id)
                 .FirstOrDefault();
+        }
+
+        public List<Shipment> GetAllShipmentsAndIncludes(bool isDelivered, List<int> ids)
+        {
+            var list = dbContext.Shipments
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(psc => psc.AssociatedUser)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Brand)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Category)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Store)
+                .ThenInclude(p => p.Address)
+                .Include(s => s.LoadStockChange)
+                .ThenInclude(lsc => lsc.ProductStockChanges)
+                .ThenInclude(psc => psc.StoreProduct)
+                .ThenInclude(p => p.Store)
+                .Include(s => s.EndLocationStore)
+                .ThenInclude(es => es.Address)
+                .Where(s => s.Delivered == isDelivered && ids.Contains(s.Id))
+                .OrderByDescending(p => p.LoadStockChange.DateChanged)
+                .ToList();
+
+            foreach (var item in list)
+            {
+                item.LoadStockChange.ProductStockChanges.OrderBy(psc => psc.StoreProduct.Store.Address.City);
+            }
+
+            return list;
         }
     }
 }

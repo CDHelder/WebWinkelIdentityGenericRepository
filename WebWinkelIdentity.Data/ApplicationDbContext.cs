@@ -275,6 +275,7 @@ namespace WebWinkelIdentity.Data
                 s.ToTable("Shipments");
                 s.HasOne(sh => sh.EndLocationStore).WithMany().HasForeignKey(els => els.StoreId);
                 s.HasOne(sh => sh.LoadStockChange).WithOne(lsc => lsc.Shipment).HasForeignKey<Shipment>(lsc => lsc.LoadStockChangeId);
+                s.HasOne(sh => sh.UserThatConfirmed).WithMany().HasForeignKey(sh => sh.UserId);
             });
 
             builder.Entity<WeekOpeningTimes>(wot =>

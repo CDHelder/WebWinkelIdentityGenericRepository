@@ -52,9 +52,9 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return Page();
             }
 
-            AllTextData = string.Join("\n", list);
+            AllTextData = string.Join(",", list);
 
-            return RedirectToPage("/ConfirmDeliveryShipment");
+            return LocalRedirect($"/Shipments/ConfirmDeliveryShipment?ids={AllTextData}");
 
         }
     }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210908103704_UserConfirmedShipment")]
+    partial class UserConfirmedShipment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -773,6 +775,9 @@ namespace WebWinkelIdentity.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserThatConfirmedId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -782,7 +787,7 @@ namespace WebWinkelIdentity.Data.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserThatConfirmedId");
 
                     b.ToTable("Shipments");
                 });
@@ -1269,11 +1274,11 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "52a5d716-a649-4476-b316-108d96c56112",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a2326cf1-fe52-4379-8103-dcf37f5beaef",
+                            ConcurrencyStamp = "906acae0-390a-4c5b-8a55-5a0ab0be502a",
                             Email = "Jaap@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEFiYpDBunNJIm6MWnCOr0RmS7NT/cpwHuVGJKXZGtE48OaP3kRiDPGy8Gr4F3P0OOw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMsXTRqaw/dx5+g93SiKavhpZcO6SGUGxcPtfP7SCb6O1TTmUBtDvN2CRJ8AeyL3gw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1309,13 +1314,13 @@ namespace WebWinkelIdentity.Data.Migrations
                         {
                             Id = "7036d951-7cc8-488f-b95b-10c2e96c31c9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9c4ecef0-bc2d-4dfa-a036-c210831af10e",
+                            ConcurrencyStamp = "60992b03-8edf-4b11-9a0d-8ed82b88e306",
                             Email = "Samantha@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEDxc7NzivKVyomNdAr8xbV1IiUSicSZGTAmboLz+4o/tLyjJbZLW+nh0t3h/36CgnQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGWnt8DLA3T+Bcdr1R1PLMPFLHXZv1tPPdR+JDSGIGAD+R5F9C2LwBgUwyOkNNHVqQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "61081e62-bffc-4fe8-87cd-24f97436dbb3",
+                            SecurityStamp = "9f03fd67-9963-441c-9147-4f957bac2d62",
                             TwoFactorEnabled = false,
                             UserName = "Samantha123",
                             AddressId = 3,
@@ -1495,7 +1500,7 @@ namespace WebWinkelIdentity.Data.Migrations
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "UserThatConfirmed")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserThatConfirmedId");
 
                     b.Navigation("EndLocationStore");
 
