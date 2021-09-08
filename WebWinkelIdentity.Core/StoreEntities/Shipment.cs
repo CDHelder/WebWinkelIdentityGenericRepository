@@ -18,7 +18,5 @@ namespace WebWinkelIdentity.Core.StoreEntities
         public Store EndLocationStore { get; set; }
         public int LoadStockChangeId { get; set; }
         public LoadStockChange LoadStockChange { get; set; }
-
-        //TODO: DbContext shit voor Shipment
     }
 }

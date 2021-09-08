@@ -52,6 +52,7 @@
         <tbody>
             @foreach (var item in Model.StoreProducts)
             {
+                //TODO: Doe Current stock op goeie manier check Delete en details
                 <tr>
                     <td>
                         <b>-@Model.AllTextDataList.Where(adat => adat == item.ProductId).Count()</b>

@@ -31,9 +31,6 @@
                 Current Stock
             </th>
             <th>
-                New Stock
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => shipment.LoadStockChange.ProductStockChanges[0].StoreProduct.Product.Id)
             </th>
             <th>
@@ -58,6 +55,7 @@
         @foreach (var PSC in shipment.LoadStockChange.ProductStockChanges)
         {
             var stockChange = PSC.StockChange * -1;
+            var currentStock = Model.StoreProducts.FirstOrDefault(a => a.ProductId == PSC.StoreProduct.ProductId).Quantity;
             <tr>
                 @if (shipment.DeliveredTime != null)
                 {
@@ -75,10 +73,7 @@
                     @Html.DisplayFor(model => shipment.EndLocationStore.Address.City)
                 </td>
                 <td>
-                    @Html.DisplayFor(model => PSC.StoreProduct.Quantity)
-                </td>
-                <td>
-                    @(PSC.StoreProduct.Quantity + (PSC.StockChange * -1))
+                    @currentStock
                 </td>
                 <td>
                     @Html.DisplayFor(model => PSC.StoreProduct.ProductId)
