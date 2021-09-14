@@ -1,40 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Brands.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class DetailsModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public DetailsModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public DetailsModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         public Brand Brand { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Brand = await _context.Brands
-                .Include(b => b.Supplier).FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new GetBrandQuery(id)).Result;
 
-            if (Brand == null)
+            if (result.IsFailure)
             {
                 return NotFound();
             }
+
+            Brand = result.Value;
+
             return Page();
         }
     }

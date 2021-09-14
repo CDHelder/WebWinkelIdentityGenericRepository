@@ -17,4 +17,8 @@
     <ProjectReference Include="..\WebWinkelIdentity.Core\WebWinkelIdentity.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
+
 </Project>

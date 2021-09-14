@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
+        //TODO: Implement MediatoR
         private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
 
         public EditModel(WebWinkelIdentity.Data.ApplicationDbContext context)

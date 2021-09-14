@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Brands.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class IndexModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public IndexModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public IndexModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
-        public IList<Brand> Brand { get;set; }
+        public List<Brand> Brand { get;set; }
 
         public async Task OnGetAsync()
         {
-            Brand = await _context.Brands
-                .Include(b => b.Supplier).ToListAsync();
+            Brand = mediator.Send(new AllBrandsQuery()).Result.Value;
         }
     }
 }

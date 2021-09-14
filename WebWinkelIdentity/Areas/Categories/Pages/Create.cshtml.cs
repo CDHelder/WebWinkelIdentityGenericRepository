@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Commands;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class CreateModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public CreateModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public CreateModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         public IActionResult OnGet()
@@ -26,8 +25,8 @@ namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 
         [BindProperty]
         public Category Category { get; set; }
+        public string FormResult { get; set; }
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -35,8 +34,13 @@ namespace WebWinkelIdentity.Web.Areas.Categories.Pages
                 return Page();
             }
 
-            _context.Categories.Add(Category);
-            await _context.SaveChangesAsync();
+            var result = mediator.Send(new CreateCategoryCommand(Category)).Result;
+
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
 
             return RedirectToPage("./Index");
         }

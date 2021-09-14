@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class ConfirmAddStockModel : PageModel
     {
         private readonly IMediator mediator;

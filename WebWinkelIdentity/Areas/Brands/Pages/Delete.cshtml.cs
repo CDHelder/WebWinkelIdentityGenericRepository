@@ -1,57 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Brands.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public DeleteModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public DeleteModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         [BindProperty]
         public Brand Brand { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Brand = await _context.Brands
-                .Include(b => b.Supplier).FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new GetBrandQuery(id)).Result;
 
-            if (Brand == null)
+            if (result.Value == null)
             {
                 return NotFound();
             }
+
+            Brand = result.Value;
+
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Brand = await _context.Brands.FindAsync(id);
+            var result = mediator.Send(new DeleteBrandCommand(id)).Result;
 
-            if (Brand != null)
+            if (result.IsFailure)
             {
-                _context.Brands.Remove(Brand);
-                await _context.SaveChangesAsync();
+                FormResult = result.Error;
+                return Page();
             }
 
             return RedirectToPage("./Index");

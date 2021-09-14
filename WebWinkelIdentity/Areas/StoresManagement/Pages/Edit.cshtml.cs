@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using WebWinkelIdentity.Data;
 using WebWinkelIdentity.Core.StoreEntities;
 using MediatR;
 using WebWinkelIdentity.Web.Application.Queries;
-using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Web.Application.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebWinkelIdentity.Web.Areas.StoresManagement.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         private readonly IMediator mediator;

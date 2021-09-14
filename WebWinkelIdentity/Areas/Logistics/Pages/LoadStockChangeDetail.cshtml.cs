@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Web.Application.Queries;
-using WebWinkelIdentity.Data.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class LoadStockChangeDetailModel : PageModel
     {
         private readonly IMediator mediator;

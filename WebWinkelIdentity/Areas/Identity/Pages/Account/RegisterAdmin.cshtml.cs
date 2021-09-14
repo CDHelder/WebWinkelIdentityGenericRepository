@@ -17,6 +17,7 @@ using WebWinkelIdentity.Core;
 
 namespace WebWinkelIdentity.Areas.Identity.Pages.Account
 {
+    //TODO: Na Datababase reset Admin+EmployeeRegister Pages Admin Only maken
     [AllowAnonymous]
     public class RegisterAdminModel : PageModel
     {

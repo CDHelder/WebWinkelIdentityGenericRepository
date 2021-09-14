@@ -52,13 +52,13 @@
         <tbody>
             @foreach (var item in Model.StoreProducts)
             {
-                //TODO: Doe Current stock op goeie manier check Delete en details
+                var currentStock = Model.StoreProducts.FirstOrDefault(a => a.ProductId == item.ProductId).Quantity;
                 <tr>
                     <td>
                         <b>-@Model.AllTextDataList.Where(adat => adat == item.ProductId).Count()</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Quantity)
+                        @currentStock
                     </td>
                     <td>
                         @(item.Quantity - Model.AllTextDataList.Where(adat => adat == item.ProductId).Count())

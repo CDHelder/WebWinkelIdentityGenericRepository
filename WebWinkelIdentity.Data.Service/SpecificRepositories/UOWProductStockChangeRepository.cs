@@ -28,8 +28,6 @@ namespace WebWinkelIdentity.Data.Service.SpecificRepositories
                 .ThenInclude(p => p.Address)
                 .Include(psc => psc.StoreProduct)
                 .ThenInclude(p => p.Store)
-                //TODO: Verander
-                //.Include(psc => psc.AssociatedUser)
                 .OrderByDescending(p => p.Id)
                 .ToList();
         }

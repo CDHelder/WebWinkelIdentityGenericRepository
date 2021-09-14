@@ -1,48 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Brands.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public EditModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public EditModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         [BindProperty]
         public Brand Brand { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Brand = await _context.Brands
-                .Include(b => b.Supplier).FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new GetBrandQuery(id)).Result;
 
-            if (Brand == null)
+            if (result.IsFailure)
             {
                 return NotFound();
             }
-           ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Id");
+
+            Brand = result.Value;
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -50,30 +49,15 @@ namespace WebWinkelIdentity.Web.Areas.Brands.Pages
                 return Page();
             }
 
-            _context.Attach(Brand).State = EntityState.Modified;
+            var result = mediator.Send(new UpdateBrandCommand(Brand)).Result;
 
-            try
+            if (result.IsFailure)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BrandExists(Brand.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                FormResult = result.Error;
+                return Page();
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool BrandExists(int id)
-        {
-            return _context.Brands.Any(e => e.Id == id);
         }
     }
 }

@@ -25,9 +25,4 @@
     <ProjectReference Include="..\WebWinkelIdentity.Data.Service\WebWinkelIdentity.Data.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\ProductsManagement\Pages\Stock\" />
-    <Folder Include="Areas\ProductsManagement\Pages\Product\" />
-  </ItemGroup>
-
 </Project>

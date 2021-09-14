@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class CreateModel : PageModel
     {
         private readonly IMediator mediator;
@@ -47,7 +45,6 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
         [TempData]
         public int SelectedDeliveryLocationStoreId { get; set; }
 
-        //TODO: Check of werkt
         public IActionResult OnPost()
         {
             if (!ModelState.IsValid)

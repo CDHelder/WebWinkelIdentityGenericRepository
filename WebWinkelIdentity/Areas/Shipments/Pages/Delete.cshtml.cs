@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data;
 using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
         private readonly IMediator mediator;
@@ -60,7 +58,6 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
                 return NotFound();
             }
 
-            //TODO: Maak DeleteShipmentCommand(int id)
             var result = mediator.Send(new DeleteShipmentCommand(id)).Result;
 
             if (result.IsFailure)

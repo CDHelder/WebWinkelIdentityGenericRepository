@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class IndexModel : PageModel
     {
+        //TODO: Implement MediatoR
         private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
 
         public IndexModel(WebWinkelIdentity.Data.ApplicationDbContext context)

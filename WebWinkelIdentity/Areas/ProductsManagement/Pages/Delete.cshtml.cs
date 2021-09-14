@@ -4,10 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using WebWinkelIdentity.Core;
 using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 

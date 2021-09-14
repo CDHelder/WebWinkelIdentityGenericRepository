@@ -36,8 +36,6 @@ namespace WebWinkelIdentity.Web.Application.Queries
                 .Include(p => p.StoreProduct)
                 .ThenInclude(sp => sp.Store)
                 .ThenInclude(p => p.Address)
-                //TODO: Verander
-                //.Include(p => p.AssociatedUser)
                 );
 
             return Task.FromResult(Result.Success(PSC));

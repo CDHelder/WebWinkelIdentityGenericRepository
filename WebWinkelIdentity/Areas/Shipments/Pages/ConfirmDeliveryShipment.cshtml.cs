@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebWinkelIdentity.Core.StoreEntities;
@@ -12,6 +12,7 @@ using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class ConfirmDeliveryShipmentModel : PageModel
     {
         private readonly IMediator mediator;
@@ -62,7 +63,6 @@ namespace WebWinkelIdentity.Web.Areas.Shipments.Pages
 
         public IActionResult OnPost(string ids)
         {
-            //TODO: Maak Mediator voor het implementeren van alle Shipments zijn bezorgd
 
             var intIds = ids.Split(", ").Select(Int32.Parse).ToList();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier.ToString());

@@ -39,7 +39,6 @@ namespace WebWinkelIdentity.Data.Service
             dbSet.Remove(entity);
         }
 
-        //TODO: haal orderby weg
         public virtual T Get(
             Expression<Func<T, bool>> filter,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,

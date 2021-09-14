@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class RemoveStockModel : PageModel
     {
         private readonly IMediator mediator;
@@ -58,8 +57,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
             AllText = AllText.Replace("\r", "");
             var list = AllText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
-            //TODO: Check if Mediator is working correctly
-            //Geen errors en hij runt gwn, wel nog even debuggen
             var result = mediator.Send(new BoolProductsAndStoreExcistValidationQuery(list, SelectedStoreId));
 
             if (result.Result.IsFailure)
@@ -68,7 +65,6 @@ namespace WebWinkelIdentity.Web.Areas.Logistics.Pages
                 return Page();
             }
 
-            //TODO: Check if Mediator is working correctly
             var storeId = int.Parse(SelectedStoreId);
             var productStockChangeResult = await mediator.Send(new BoolProductStockChangeExcistsQuery(list, storeId));
 

@@ -35,14 +35,12 @@ namespace WebWinkelIdentity.Web.Application.Commands
             {
                 if (storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id] != 0)
                 {
-                    //TODO: Verander
                     var PSC = new ProductStockChange
                     {
                         StockChange = storeProduct.Quantity - request.BeforeChangeStockValues[storeProduct.Id],
                         StoreProductId = storeProduct.Id
                     };
 
-                    //unitOfWork.ProductStockChangeRepository.Create(PSC);
                     LSC.ProductStockChanges.Add(PSC);
                 }
             }

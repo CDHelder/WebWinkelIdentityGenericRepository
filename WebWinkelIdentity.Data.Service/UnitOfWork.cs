@@ -37,167 +37,73 @@ namespace WebWinkelIdentity.Data.Service
             ShipmentRepository = shipmentRepository;
         }
 
-        //TODO: Refactor
         public UOWProductRepository ProductRepository 
         {
             get => productRepository ?? new UOWProductRepository(_dbContext);
-
             private set => productRepository = value;
         }
 
         public UOWProductStockChangeRepository ProductStockChangeRepository
         {
-            get
-            {
-                if (this.productStockChangeRepository == null)
-                {
-                    this.productStockChangeRepository = new UOWProductStockChangeRepository(_dbContext);
-                }
-                return productStockChangeRepository;
-            }
-            private set
-            {
-                this.productStockChangeRepository = value;
-            }
+            get => productStockChangeRepository ?? new UOWProductStockChangeRepository(_dbContext);
+            private set => productStockChangeRepository = value;
         }
 
         public UOWBrandRepository BrandRepository
         {
-            get
-            {
-                if (this.brandRepository == null)
-                {
-                    this.brandRepository = new UOWBrandRepository(_dbContext);
-                }
-                return brandRepository;
-            }
-            private set
-            {
-                this.brandRepository = value;
-            }
+            get => brandRepository ?? new UOWBrandRepository(_dbContext);
+            private set => brandRepository = value;
         }
 
         public UOWCategoryRepository CategoryRepository
         {
-            get
-            {
-                if (this.categoryRepository == null)
-                {
-                    this.categoryRepository = new UOWCategoryRepository(_dbContext);
-                }
-                return categoryRepository;
-            }
-            private set
-            {
-                this.categoryRepository = value;
-            }
+            get => categoryRepository ?? new UOWCategoryRepository(_dbContext);
+            private set => categoryRepository = value;
         }
 
         public UOWStoreRepository StoreRepository
         {
-            get
-            {
-                if (this.storeRepository == null)
-                {
-                    this.storeRepository = new UOWStoreRepository(_dbContext);
-                }
-                return storeRepository;
-            }
-            private set
-            {
-                this.storeRepository = value;
-            }
+            get => storeRepository ?? new UOWStoreRepository(_dbContext);
+            private set => storeRepository = value;
         }
 
         public UOWStoreEmployeeRepository StoreEmployeeRepository
         {
-            get
-            {
-                if (this.storeEmployeeRepository == null)
-                {
-                    this.storeEmployeeRepository = new UOWStoreEmployeeRepository(_dbContext);
-                }
-                return storeEmployeeRepository;
-            }
-            private set
-            {
-                this.storeEmployeeRepository = value;
-            }
+            get => storeEmployeeRepository ?? new UOWStoreEmployeeRepository(_dbContext);
+            private set => storeEmployeeRepository = value;
         }
 
         public UOWStoreProductRepository StoreProductRepository
         {
-            get
-            {
-                if (this.storeProductRepository == null)
-                {
-                    this.storeProductRepository = new UOWStoreProductRepository(_dbContext);
-                }
-                return storeProductRepository;
-            }
-            private set
-            {
-                this.storeProductRepository = value;
-            }
+            get => storeProductRepository ?? new UOWStoreProductRepository(_dbContext);
+            private set => storeProductRepository = value;
         }
 
         public UOWCustomerRepository CustomerRepository
         {
-            get
-            {
-                if (this.customerRepository == null)
-                {
-                    this.customerRepository = new UOWCustomerRepository(_dbContext);
-                }
-                return customerRepository;
-            }
-            private set
-            {
-                this.customerRepository = value;
-            }
+            get => customerRepository ?? new UOWCustomerRepository(_dbContext);
+            private set => customerRepository = value;
         }
 
         public UOWEmployeeRepository EmployeeRepository
         {
-            get
-            {
-                if (this.employeeRepository == null)
-                {
-                    this.employeeRepository = new UOWEmployeeRepository(_dbContext);
-                }
-                return employeeRepository;
-            }
-            private set
-            {
-                this.employeeRepository = value;
-            }
+            get => employeeRepository ?? new UOWEmployeeRepository(_dbContext);
+            private set => employeeRepository = value;
         }
 
         public UOWAddressRepository AddressRepository
         {
-            get
-            {
-                if (this.addressRepository == null)
-                {
-                    this.addressRepository = new UOWAddressRepository(_dbContext);
-                }
-                return addressRepository;
-            }
-            private set
-            {
-                this.addressRepository = value;
-            }
+            get => addressRepository ?? new UOWAddressRepository(_dbContext);
+            private set => addressRepository = value;
         }
         public UOWLoadStockChangeRepository LoadStockChangeRepository
         {
             get => loadStockChangeRepository ?? new UOWLoadStockChangeRepository(_dbContext);
-
             private set => loadStockChangeRepository = value;
         }
         public UOWShipmentRepository ShipmentRepository
         {
             get => shipmentRepository ?? new UOWShipmentRepository(_dbContext);
-
             private set => shipmentRepository = value;
         }
 

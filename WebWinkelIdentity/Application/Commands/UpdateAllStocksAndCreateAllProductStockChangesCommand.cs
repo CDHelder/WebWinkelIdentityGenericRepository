@@ -87,7 +87,6 @@ namespace WebWinkelIdentity.Web.Application.Commands
                 return Task.FromResult(Result.Failure<int>($"No changes were saved in the Database"));
             }
 
-            //TODO: Check of dit goed werkt
             if (request.IsShipment == true && request.DeliveryLocationStoreId != 0)
             {
                 //var createdShipmentId = unitOfWork.ShipmentRepository.Get

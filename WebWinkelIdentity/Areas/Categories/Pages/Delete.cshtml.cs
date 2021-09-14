@@ -1,40 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Data;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public DeleteModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public DeleteModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         [BindProperty]
         public Category Category { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new CategoryQuery(id)).Result;
 
-            if (Category == null)
+            if (result.IsFailure)
             {
+                FormResult = result.Error;
                 return NotFound();
             }
+
+            Category = result.Value;
+
             return Page();
         }
 
@@ -45,13 +50,13 @@ namespace WebWinkelIdentity.Web.Areas.Categories.Pages
                 return NotFound();
             }
 
-            Category = await _context.Categories.FindAsync(id);
+            //Category = await _context.Categories.FindAsync(id);
 
-            if (Category != null)
-            {
-                _context.Categories.Remove(Category);
-                await _context.SaveChangesAsync();
-            }
+            //if (Category != null)
+            //{
+            //    _context.Categories.Remove(Category);
+            //    await _context.SaveChangesAsync();
+            //}
 
             return RedirectToPage("./Index");
         }
