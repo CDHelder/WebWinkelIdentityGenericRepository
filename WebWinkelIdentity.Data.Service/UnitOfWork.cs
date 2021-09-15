@@ -1,5 +1,4 @@
-﻿using WebWinkelIdentity.Core.StoreEntities;
-using WebWinkelIdentity.Data.Service.Interfaces;
+﻿using WebWinkelIdentity.Data.Service.Interfaces;
 using WebWinkelIdentity.Data.Service.SpecificRepositories;
 
 namespace WebWinkelIdentity.Data.Service

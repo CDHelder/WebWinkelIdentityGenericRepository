@@ -1,8 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using MediatR;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebWinkelIdentity.Core.StoreEntities;
@@ -26,6 +24,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
         public Task<Result<List<Product>>> Handle(UniqueProductListQuery request, CancellationToken cancellationToken)
         {
             var products = unitOfWork.ProductRepository.GetUniqueListProducts();
+
             return Task.FromResult(Result.Success(products));
         }
     }

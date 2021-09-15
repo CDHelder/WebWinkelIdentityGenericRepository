@@ -1,8 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using MediatR;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebWinkelIdentity.Core.StoreEntities;
@@ -28,9 +26,7 @@ namespace WebWinkelIdentity.Web.Application.Queries
             var products = unitOfWork.ProductRepository.GetStoreUniqueListProducts(request.Id);
 
             if (products == null)
-            {
                 return Task.FromResult(Result.Failure<List<Product>>($"Couldn't find any products that are related to store with id: {request.Id}"));
-            }
 
             return Task.FromResult(Result.Success(products));
         }

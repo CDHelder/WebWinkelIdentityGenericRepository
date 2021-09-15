@@ -2,7 +2,6 @@
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebWinkelIdentity.Core.StoreEntities;
@@ -26,9 +25,7 @@ namespace WebWinkelIdentity.Web.Application.Commands
         public Task<Result> Handle(ShipmentsDeliveryCommand request, CancellationToken cancellationToken)
         {
             if (request.Ids == null)
-            {
                 return Task.FromResult(Result.Failure("To confirm delivery please give the shipment ids"));
-            }
 
             var shipments = unitOfWork.ShipmentRepository.GetAllShipmentsAndIncludes(false, request.Ids);
 
@@ -62,9 +59,7 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
                 unitOfWork.LoadStockChangeRepository.Create(LSC);
                 if (unitOfWork.SaveChanges() == false)
-                {
                     return Task.FromResult(Result.Failure("Couldn't save LoadStockChange"));
-                }
 
                 shipment.DeliveredTime = DateTime.Now;
                 shipment.Delivered = true;
@@ -72,9 +67,7 @@ namespace WebWinkelIdentity.Web.Application.Commands
 
                 unitOfWork.ShipmentRepository.Update(shipment);
                 if (unitOfWork.SaveChanges() == false)
-                {
                     return Task.FromResult(Result.Failure("Couldn't save shipment changes"));
-                }
             }
 
             return Task.FromResult(Result.Success());

@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebWinkelIdentity.Core;
-using WebWinkelIdentity.Core.StoreEntities;
 using WebWinkelIdentity.Data.Service.SpecificRepositories;
 
 namespace WebWinkelIdentity.Data.Service.Interfaces
