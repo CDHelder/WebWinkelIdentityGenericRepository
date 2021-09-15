@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebWinkelIdentity.Core.StoreEntities
+﻿namespace WebWinkelIdentity.Core.StoreEntities
 {
     public class ProductStockChange
     {

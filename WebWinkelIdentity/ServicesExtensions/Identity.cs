@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebWinkelIdentity.Data;
 
 namespace WebWinkelIdentity.Web.ServicesExtensions
