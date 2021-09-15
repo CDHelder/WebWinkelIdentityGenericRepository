@@ -1,38 +1,44 @@
 ﻿using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
     [Authorize(Roles = "Admin,Employee")]
     public class DetailsModel : PageModel
     {
-        //TODO: Implement MediatoR
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public DetailsModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public DetailsModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         public Category Category { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new CategoryQuery(id)).Result;
 
-            if (Category == null)
+            if (result.IsFailure)
             {
+                FormResult = result.Error;
                 return NotFound();
             }
+
+            Category = result.Value;
+
             return Page();
         }
     }

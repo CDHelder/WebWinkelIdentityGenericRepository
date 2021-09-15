@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
+using WebWinkelIdentity.Web.Application.Commands;
 using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
@@ -43,20 +44,20 @@ namespace WebWinkelIdentity.Web.Areas.Categories.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //Category = await _context.Categories.FindAsync(id);
+            var result = mediator.Send(new DeleteCategoryCommand(id)).Result;
 
-            //if (Category != null)
-            //{
-            //    _context.Categories.Remove(Category);
-            //    await _context.SaveChangesAsync();
-            //}
+            if (result.IsFailure)
+            {
+                FormResult = result.Error;
+                return Page();
+            }
 
             return RedirectToPage("./Index");
         }

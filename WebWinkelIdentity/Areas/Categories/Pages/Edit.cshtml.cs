@@ -1,45 +1,50 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebWinkelIdentity.Core;
+using WebWinkelIdentity.Web.Application.Commands;
+using WebWinkelIdentity.Web.Application.Queries;
 
 namespace WebWinkelIdentity.Web.Areas.Categories.Pages
 {
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        //TODO: Implement MediatoR
-        private readonly WebWinkelIdentity.Data.ApplicationDbContext _context;
+        private readonly IMediator mediator;
 
-        public EditModel(WebWinkelIdentity.Data.ApplicationDbContext context)
+        public EditModel(IMediator mediator)
         {
-            _context = context;
+            this.mediator = mediator;
         }
 
         [BindProperty]
         public Category Category { get; set; }
+        public string FormResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            var result = mediator.Send(new CategoryQuery(id)).Result;
 
-            if (Category == null)
+            if (result.IsFailure)
             {
+                FormResult = result.Error;
                 return NotFound();
             }
+
+            Category = result.Value;
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -47,30 +52,15 @@ namespace WebWinkelIdentity.Web.Areas.Categories.Pages
                 return Page();
             }
 
-            _context.Attach(Category).State = EntityState.Modified;
+            var result = mediator.Send(new UpdateCategoryCommand(Category)).Result;
 
-            try
+            if (result.IsFailure)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(Category.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                FormResult = result.Error;
+                return Page();
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }
