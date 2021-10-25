@@ -29,8 +29,6 @@ namespace WebWinkelIdentity
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-
-
             services.ConfigureAuthenticationAndAuthorization();
 
             services.AddControllersWithViews();
